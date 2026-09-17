@@ -1,0 +1,2361 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>舒風沐雨｜紅斑性狼瘡與乾燥症 互動照護指南平台</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdfa',
+              100: '#ccfbf1',
+              200: '#99f6e4',
+              500: '#14b8a6',
+              600: '#0d9488',
+              700: '#0f766e',
+              800: '#115e59',
+              900: '#134e4a',
+            },
+            lupus: {
+              50: '#fdf2f8',
+              100: '#fce7f3',
+              500: '#ec4899',
+              600: '#db2777',
+              700: '#be185d',
+            },
+            sjogren: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+            }
+          },
+          fontFamily: {
+            sans: ['"Noto Sans TC"', 'Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom smooth scrolling and scrollbar */
+    html {
+      scroll-behavior: smooth;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .tab-active {
+      border-bottom-color: #0d9488 !important;
+      color: #0d9488 !important;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased font-sans min-h-screen flex flex-col">
+
+  <!-- Top Banner for Sun Safety & Daily Tip -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur shadow-sm border-b border-slate-200">
+    <!-- Notice Bar -->
+    <div class="bg-gradient-to-r from-teal-700 via-teal-600 to-cyan-700 text-white text-xs sm:text-sm py-1.5 px-4">
+      <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <div class="flex items-center gap-2 truncate">
+          <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-bold bg-white/20">每日叮嚀</span>
+          <span class="truncate">紫外線與過勞是免疫發作雙大誘因！外出請備妥 UV50+ 防護並定時補水潤眼。</span>
+        </div>
+        <div class="hidden sm:flex items-center gap-4 text-teal-100 text-xs">
+          <span id="currentDateDisplay">載入中...</span>
+          <button onclick="switchTab('tab-redflags')" class="underline hover:text-white font-medium flex items-center gap-1">
+            <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-amber-300"></i> 急性警訊自我快篩
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Navigation Bar -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-md shadow-teal-600/20">
+            <i data-lucide="shield-plus" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h1 class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+              舒風沐雨 
+              <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-teal-50 text-teal-700 border border-teal-200">SLE & 乾燥症照護</span>
+            </h1>
+            <p class="text-xs text-slate-500 hidden sm:block">自體免疫共病管理與科學生活全方位指引</p>
+          </div>
+        </div>
+
+        <!-- Action Items (Print / Quick Notes) -->
+        <div class="flex items-center gap-2">
+          <button onclick="openSyncModal()" id="btnSyncStatus" class="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg text-emerald-800 bg-emerald-50 hover:bg-emerald-100 transition border border-emerald-200">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" id="syncStatusDot"></span>
+            <span id="syncStatusText">雲端同步中</span>
+          </button>
+          <button onclick="openTimerModal()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg text-teal-700 bg-teal-50 hover:bg-teal-100 transition border border-teal-200">
+            <i data-lucide="timer" class="w-4 h-4 text-teal-600"></i>
+            <span class="hidden md:inline">20-20-20</span> 護眼計時鐘
+          </button>
+          <button onclick="switchTab('tab-notes')" class="flex items-center gap-1.5 px-3.5 py-1.5 text-xs sm:text-sm font-medium rounded-lg text-white bg-teal-600 hover:bg-teal-700 shadow-sm transition">
+            <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+            <span>就醫備忘錄</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs (Scrollable on mobile) -->
+      <nav class="flex space-x-6 overflow-x-auto no-scrollbar border-t border-slate-100 text-sm font-medium text-slate-600">
+        <button onclick="switchTab('tab-home')" id="btn-tab-home" class="nav-tab py-3 px-1 border-b-2 border-transparent hover:text-slate-900 flex items-center gap-1.5 whitespace-nowrap tab-active">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i> 儀表首頁
+        </button>
+        <button onclick="switchTab('tab-journal')" id="btn-tab-journal" class="nav-tab py-3 px-1 border-b-2 border-transparent hover:text-slate-900 flex items-center gap-1.5 whitespace-nowrap">
+          <i data-lucide="calendar-heart" class="w-4 h-4 text-rose-500"></i> 疼痛與每週日誌
+        </button>
+        <button onclick="switchTab('tab-symptoms')" id="btn-tab-symptoms" class="nav-tab py-3 px-1 border-b-2 border-transparent hover:text-slate-900 flex items-center gap-1.5 whitespace-nowrap">
+          <i data-lucide="git-compare" class="w-4 h-4"></i> 症狀比對與自評
+        </button>
+        <button onclick="switchTab('tab-meds')" id="btn-tab-meds" class="nav-tab py-3 px-1 border-b-2 border-transparent hover:text-slate-900 flex items-center gap-1.5 whitespace-nowrap">
+          <i data-lucide="pill" class="w-4 h-4"></i> 藥物百科與追蹤
+        </button>
+        <button onclick="switchTab('tab-diet')" id="btn-tab-diet" class="nav-tab py-3 px-1 border-b-2 border-transparent hover:text-slate-900 flex items-center gap-1.5 whitespace-nowrap">
+          <i data-lucide="apple" class="w-4 h-4"></i> 飲食紅綠燈
+        </button>
+        <button onclick="switchTab('tab-lifestyle')" id="btn-tab-lifestyle" class="nav-tab py-3 px-1 border-b-2 border-transparent hover:text-slate-900 flex items-center gap-1.5 whitespace-nowrap">
+          <i data-lucide="sun-medium" class="w-4 h-4"></i> 全方位日常護理
+        </button>
+        <button onclick="switchTab('tab-redflags')" id="btn-tab-redflags" class="nav-tab py-3 px-1 border-b-2 border-transparent hover:text-red-600 flex items-center gap-1.5 whitespace-nowrap">
+          <i data-lucide="activity" class="w-4 h-4 text-red-500"></i> 急性警訊與檢驗
+        </button>
+        <button onclick="switchTab('tab-notes')" id="btn-tab-notes" class="nav-tab py-3 px-1 border-b-2 border-transparent hover:text-slate-900 flex items-center gap-1.5 whitespace-nowrap">
+          <i data-lucide="file-text" class="w-4 h-4"></i> 回診清單導出
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex-1 w-full">
+    
+    <!-- ==================== TAB 1: HOME DASHBOARD ==================== -->
+    <section id="tab-home" class="tab-pane space-y-6">
+      <!-- Hero Banner -->
+      <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-teal-800 to-slate-900 text-white p-6 sm:p-8 shadow-lg">
+        <div class="relative z-10 max-w-2xl">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/20 text-teal-200 text-xs font-semibold mb-3 border border-teal-400/30">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-teal-300"></i> 科學實證・個人化共病照護
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-2">與身體溫柔對話，穩定漫步每一步</h2>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
+            紅斑性狼瘡（SLE）與乾燥症常伴隨共生。透過規律服藥、嚴格防曬、口眼保濕與定期追蹤，能有效控制免疫活性，守護全身器官。
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <button onclick="switchTab('tab-lifestyle')" class="px-4 py-2 bg-teal-500 hover:bg-teal-400 text-slate-950 font-semibold rounded-xl text-sm transition shadow">
+              今日照護守則
+            </button>
+            <button onclick="switchTab('tab-symptoms')" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-medium rounded-xl text-sm transition border border-white/20">
+              症狀快速比對
+            </button>
+          </div>
+        </div>
+        <!-- Abstract Watermark Art -->
+        <div class="absolute -right-8 -bottom-12 opacity-10 pointer-events-none">
+          <i data-lucide="shield-plus" class="w-72 h-72 text-white"></i>
+        </div>
+      </div>
+
+      <!-- Quick Status & Daily Routine Checklist -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Daily Tracker Card -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 col-span-1 lg:col-span-2">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="check-circle-2" class="w-5 h-5 text-teal-600"></i> 今日自我照護打卡
+              </h3>
+              <p class="text-xs text-slate-500">打卡進度將即時儲存於您的瀏覽器</p>
+            </div>
+            <button onclick="resetDailyChecklist()" class="text-xs text-slate-400 hover:text-slate-600 underline">重設打卡</button>
+          </div>
+
+          <!-- Interactive Checkbox Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="checklistContainer">
+            <!-- Dynamically populated / reactive items -->
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="mt-5 pt-4 border-t border-slate-100">
+            <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1.5">
+              <span>今日照護達成率</span>
+              <span id="checklistPercentage">0%</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+              <div id="checklistProgressBar" class="bg-teal-600 h-2.5 rounded-full transition-all duration-300 w-0"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vital Quick Insights -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex flex-col justify-between">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2 mb-3">
+              <i data-lucide="compass" class="w-5 h-5 text-indigo-600"></i> 核心原則速覽
+            </h3>
+            <div class="space-y-3 text-xs text-slate-600">
+              <div class="p-3 bg-amber-50 rounded-xl border border-amber-100 flex items-start gap-2.5">
+                <i data-lucide="sun" class="w-4 h-4 text-amber-600 mt-0.5 shrink-0"></i>
+                <div>
+                  <strong class="text-amber-900 block font-semibold">嚴格防曬 = 保護內臟</strong>
+                  UV 會促發自體抗原釋放，加劇全身活性，陰天與室內亦須防護。
+                </div>
+              </div>
+              <div class="p-3 bg-blue-50 rounded-xl border border-blue-100 flex items-start gap-2.5">
+                <i data-lucide="droplets" class="w-4 h-4 text-blue-600 mt-0.5 shrink-0"></i>
+                <div>
+                  <strong class="text-blue-900 block font-semibold">分次潤口，防齲為要</strong>
+                  唾液缺乏極易誘發猛爆性蛀牙，飯後必潔牙，避免牛飲沖淡抗體。
+                </div>
+              </div>
+              <div class="p-3 bg-rose-50 rounded-xl border border-rose-100 flex items-start gap-2.5">
+                <i data-lucide="shield-alert" class="w-4 h-4 text-rose-600 mt-0.5 shrink-0"></i>
+                <div>
+                  <strong class="text-rose-900 block font-semibold">絕不可擅自停藥</strong>
+                  類固醇驟停恐引起急性腎上腺危象；奎寧需長期維持保護臟器。
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-100 text-center">
+            <button onclick="switchTab('tab-redflags')" class="w-full py-2 px-3 text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-xl transition flex items-center justify-center gap-1.5">
+              <i data-lucide="alert-octagon" class="w-4 h-4 text-rose-600"></i> 檢視不可忽視的 5 大急性警訊
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Feature Navigation Cards -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div onclick="switchTab('tab-journal')" class="cursor-pointer bg-white hover:bg-slate-50 border border-slate-200 rounded-2xl p-4 transition text-center group">
+          <div class="w-10 h-10 mx-auto rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center mb-2 group-hover:scale-105 transition">
+            <i data-lucide="heart-pulse" class="w-5 h-5"></i>
+          </div>
+          <div class="font-bold text-slate-800 text-sm">疼痛每日紀錄</div>
+          <div class="text-xs text-slate-400 mt-0.5">0-10 分與當週週記</div>
+        </div>
+
+        <div onclick="switchTab('tab-symptoms')" class="cursor-pointer bg-white hover:bg-slate-50 border border-slate-200 rounded-2xl p-4 transition text-center group">
+          <div class="w-10 h-10 mx-auto rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center mb-2 group-hover:scale-105 transition">
+            <i data-lucide="layers" class="w-5 h-5"></i>
+          </div>
+          <div class="font-bold text-slate-800 text-sm">症狀比對矩陣</div>
+          <div class="text-xs text-slate-400 mt-0.5">SLE vs 乾燥症 vs 重疊</div>
+        </div>
+
+        <div onclick="switchTab('tab-meds')" class="cursor-pointer bg-white hover:bg-slate-50 border border-slate-200 rounded-2xl p-4 transition text-center group">
+          <div class="w-10 h-10 mx-auto rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center mb-2 group-hover:scale-105 transition">
+            <i data-lucide="pill" class="w-5 h-5"></i>
+          </div>
+          <div class="font-bold text-slate-800 text-sm">常用藥物庫</div>
+          <div class="text-xs text-slate-400 mt-0.5">奎寧、類固醇、生物製劑</div>
+        </div>
+
+        <div onclick="switchTab('tab-diet')" class="cursor-pointer bg-white hover:bg-slate-50 border border-slate-200 rounded-2xl p-4 transition text-center group">
+          <div class="w-10 h-10 mx-auto rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-2 group-hover:scale-105 transition">
+            <i data-lucide="utensils" class="w-5 h-5"></i>
+          </div>
+          <div class="font-bold text-slate-800 text-sm">飲食避坑指南</div>
+          <div class="text-xs text-slate-400 mt-0.5">苜蓿芽與補品禁忌</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB: PAIN & WEEKLY JOURNAL ==================== -->
+    <section id="tab-journal" class="tab-pane hidden space-y-6">
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-slate-100">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="calendar-heart" class="w-6 h-6 text-rose-600"></i>
+              每日疼痛感紀錄與健康週記
+            </h2>
+            <p class="text-slate-500 text-sm mt-1">
+              紀錄每日關節肌肉疼痛、晨間僵硬與生活隨筆，精確掌握每週症狀起伏，為回診提供量化數據。
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="exportWeeklyReportToNotes()" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-semibold shadow-sm transition flex items-center gap-1.5">
+              <i data-lucide="clipboard-copy" class="w-4 h-4"></i> 匯出本週週記至備忘錄
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
+          <!-- Left Column: Daily Entry Form (5 cols) -->
+          <div class="lg:col-span-5 bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-5">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                <i data-lucide="pen-line" class="w-4 h-4 text-teal-600"></i> 填寫今日紀錄
+              </span>
+              <input type="date" id="journalDateInput" onchange="onJournalDateChange()" class="px-2.5 py-1 text-xs rounded-lg border border-slate-300 bg-white font-medium text-slate-700 focus:ring-2 focus:ring-teal-500">
+            </div>
+
+            <!-- Pain Level (0-10 NRS) -->
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <label class="text-xs font-bold text-slate-800 flex items-center gap-1">
+                  <span>疼痛指數 (0-10)</span>
+                  <span id="painLevelBadge" class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">0 分・完全無痛</span>
+                </label>
+                <span id="painFaceEmoji" class="text-2xl">😊</span>
+              </div>
+              <input type="range" id="painRangeInput" min="0" max="10" value="0" step="1" oninput="updatePainSliderUI(this.value)" class="w-full accent-rose-600 cursor-pointer h-2 bg-slate-200 rounded-lg">
+              <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                <span>0 (無痛)</span>
+                <span>3 (輕微)</span>
+                <span>6 (中度干擾)</span>
+                <span>10 (劇烈難耐)</span>
+              </div>
+            </div>
+
+            <!-- Pain Locations -->
+            <div>
+              <label class="block text-xs font-bold text-slate-800 mb-2">主要疼痛/不適部位（可複選）：</label>
+              <div class="grid grid-cols-2 gap-1.5 text-xs" id="painLocationsContainer">
+                <label class="flex items-center gap-2 p-2 rounded-lg bg-white border border-slate-200 hover:border-slate-300 cursor-pointer">
+                  <input type="checkbox" name="painLoc" value="雙手指關節/手腕" class="rounded text-rose-600 focus:ring-rose-500">
+                  <span class="text-slate-700">雙手指/手腕</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 rounded-lg bg-white border border-slate-200 hover:border-slate-300 cursor-pointer">
+                  <input type="checkbox" name="painLoc" value="雙膝/踝足關節" class="rounded text-rose-600 focus:ring-rose-500">
+                  <span class="text-slate-700">雙膝/踝足</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 rounded-lg bg-white border border-slate-200 hover:border-slate-300 cursor-pointer">
+                  <input type="checkbox" name="painLoc" value="肩頸與上背" class="rounded text-rose-600 focus:ring-rose-500">
+                  <span class="text-slate-700">肩頸/上背</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 rounded-lg bg-white border border-slate-200 hover:border-slate-300 cursor-pointer">
+                  <input type="checkbox" name="painLoc" value="全身肌肉痠痛" class="rounded text-rose-600 focus:ring-rose-500">
+                  <span class="text-slate-700">全身肌肉痠痛</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 rounded-lg bg-white border border-slate-200 hover:border-slate-300 cursor-pointer">
+                  <input type="checkbox" name="painLoc" value="胸口深呼吸牽扯痛" class="rounded text-rose-600 focus:ring-rose-500">
+                  <span class="text-slate-700">胸口牽扯刺痛</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 rounded-lg bg-white border border-slate-200 hover:border-slate-300 cursor-pointer">
+                  <input type="checkbox" name="painLoc" value="頭部緊繃或偏頭痛" class="rounded text-rose-600 focus:ring-rose-500">
+                  <span class="text-slate-700">偏頭痛/緊繃</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Morning Stiffness & Fatigue -->
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div>
+                <label class="block font-bold text-slate-800 mb-1">晨間僵硬時間：</label>
+                <select id="stiffnessSelect" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700 focus:ring-2 focus:ring-teal-500">
+                  <option value="無僵硬">無明顯僵硬</option>
+                  <option value="< 15 分鐘">短暫 (< 15 分鐘)</option>
+                  <option value="15~30 分鐘">輕度 (15~30 分鐘)</option>
+                  <option value="30~60 分鐘">中度 (30~60 分鐘)</option>
+                  <option value="> 1 小時">顯著 (> 1 小時)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block font-bold text-slate-800 mb-1">疲累虛弱度 (1-5)：</label>
+                <select id="fatigueSelect" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700 focus:ring-2 focus:ring-teal-500">
+                  <option value="1">1 - 精神充沛</option>
+                  <option value="2">2 - 輕微疲倦</option>
+                  <option value="3" selected>3 - 普通疲倦</option>
+                  <option value="4">4 - 明顯虛脫沉重</option>
+                  <option value="5">5 - 臥床無力</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Dryness severity -->
+            <div>
+              <label class="block text-xs font-bold text-slate-800 mb-1">今日眼口乾燥困擾 (1-5)：</label>
+              <div class="flex items-center gap-2">
+                <input type="range" id="drynessRangeInput" min="1" max="5" value="2" step="1" oninput="document.getElementById('drynessDisplay').innerText = this.value + ' 級'" class="w-full accent-blue-600 cursor-pointer h-2 bg-slate-200 rounded-lg">
+                <span id="drynessDisplay" class="text-xs font-bold text-blue-700 w-10 text-right">2 級</span>
+              </div>
+            </div>
+
+            <!-- Daily Note / Diary -->
+            <div>
+              <label class="block text-xs font-bold text-slate-800 mb-1">今日手札／週記備註（可記錄天氣、用藥反應、作息）：</label>
+              <textarea id="journalNoteInput" rows="3" placeholder="例如：今日氣溫驟降關節微脹；下午服藥後已多喝水..." class="w-full p-2.5 text-xs rounded-xl border border-slate-300 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500"></textarea>
+            </div>
+
+            <div class="pt-1 flex gap-2">
+              <button onclick="saveDailyLog()" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5">
+                <i data-lucide="save" class="w-4 h-4"></i> 儲存今日日誌
+              </button>
+              <button onclick="deleteDailyLog()" id="btnDeleteLog" class="hidden py-2.5 px-3 bg-slate-200 hover:bg-rose-100 hover:text-rose-700 text-slate-600 rounded-xl text-xs font-semibold transition" title="刪除此日紀錄">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Right Column: Weekly View & Trends (7 cols) -->
+          <div class="lg:col-span-7 flex flex-col justify-between space-y-5">
+            <!-- Week Selector & Summary Box -->
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2">
+                  <button onclick="changeWeeklyOffset(-1)" class="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-600">
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                  </button>
+                  <span id="currentWeekRangeLabel" class="text-sm font-bold text-slate-900">載入週記中...</span>
+                  <button onclick="changeWeeklyOffset(1)" class="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-600">
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                  </button>
+                </div>
+                <button onclick="resetToCurrentWeek()" class="text-xs text-teal-600 hover:underline font-semibold">回到本週</button>
+              </div>
+
+              <!-- Weekly Stats Metrics -->
+              <div class="grid grid-cols-3 gap-3 mb-5">
+                <div class="bg-rose-50/60 border border-rose-100 rounded-xl p-3 text-center">
+                  <span class="text-[11px] text-rose-700 font-medium">當週平均疼痛</span>
+                  <div id="weeklyAvgPain" class="text-xl font-extrabold text-rose-800 mt-0.5">--</div>
+                </div>
+                <div class="bg-amber-50/60 border border-amber-100 rounded-xl p-3 text-center">
+                  <span class="text-[11px] text-amber-700 font-medium">最高疼痛日</span>
+                  <div id="weeklyMaxPain" class="text-xl font-extrabold text-amber-800 mt-0.5">--</div>
+                </div>
+                <div class="bg-teal-50/60 border border-teal-100 rounded-xl p-3 text-center">
+                  <span class="text-[11px] text-teal-700 font-medium">紀錄填寫率</span>
+                  <div id="weeklyLoggedCount" class="text-xl font-extrabold text-teal-800 mt-0.5">0 / 7 天</div>
+                </div>
+              </div>
+
+              <!-- Visual 7-Day Pain Trend Bar Chart -->
+              <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <div class="flex items-center justify-between mb-3 text-xs">
+                  <span class="font-bold text-slate-700 flex items-center gap-1">
+                    <i data-lucide="bar-chart-2" class="w-3.5 h-3.5 text-rose-600"></i> 本週疼痛感趨勢圖 (0~10 分)
+                  </span>
+                  <span class="text-[11px] text-slate-400">點選柱狀長條可切換至該日</span>
+                </div>
+                <div class="grid grid-cols-7 gap-2 items-end h-32 pt-4 pb-1" id="weeklyTrendChart">
+                  <!-- Injected by JS: 7 vertical bars -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Daily Cards of the Week -->
+            <div>
+              <h4 class="text-xs font-bold text-slate-800 mb-2.5 flex items-center gap-1">
+                <i data-lucide="list" class="w-3.5 h-3.5 text-slate-500"></i> 當週每日明細與隨筆
+              </h4>
+              <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="weeklyDetailsList">
+                <!-- Injected by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: SYMPTOMS COMPARISON & SELF-ASSESSMENT ==================== -->
+    <section id="tab-symptoms" class="tab-pane hidden space-y-6">
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+        <div class="max-w-3xl mb-6">
+          <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+            <i data-lucide="git-compare" class="w-6 h-6 text-teal-600"></i>
+            紅斑性狼瘡 (SLE) 與 乾燥症 (SS) 症狀矩陣比對
+          </h2>
+          <p class="text-slate-500 text-sm mt-1">
+            臨床上約有 15%～30% 的紅斑性狼瘡病友會合併次發性乾燥症。釐清不同疾病表徵有助於精準回報醫師。
+          </p>
+        </div>
+
+        <!-- Filter / Filter Pills -->
+        <div class="flex flex-wrap gap-2 mb-6" id="symptomFilters">
+          <button onclick="filterSymptomCategory('all')" class="symptom-filter-btn active px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-white transition">全部顯示</button>
+          <button onclick="filterSymptomCategory('lupus')" class="symptom-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">紅斑性狼瘡 (SLE)</button>
+          <button onclick="filterSymptomCategory('sjogren')" class="symptom-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">乾燥症 (SS)</button>
+          <button onclick="filterSymptomCategory('overlap')" class="symptom-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">共同重疊症狀</button>
+        </div>
+
+        <!-- Interactive Comparison Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="symptomGrid">
+          <!-- Card 1: SLE Special -->
+          <div class="symptom-card lupus bg-pink-50/60 border border-pink-200 rounded-xl p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-pink-200 text-pink-800">SLE 典型表現</span>
+                <i data-lucide="shield-alert" class="w-4 h-4 text-pink-600"></i>
+              </div>
+              <h4 class="font-bold text-slate-900 text-base mb-2">器官侵犯與光敏特徵</h4>
+              <ul class="text-xs text-slate-700 space-y-2 leading-relaxed">
+                <li class="flex items-start gap-1.5"><span class="text-pink-600 font-bold">•</span> <strong>蝴蝶斑與盤狀紅斑：</strong> 臉部對稱跨鼻樑紅斑，常於日曬後誘發。</li>
+                <li class="flex items-start gap-1.5"><span class="text-pink-600 font-bold">•</span> <strong>狼瘡性腎炎：</strong> 下肢水腫、大量綿密泡沫尿（蛋白尿）、高血壓。</li>
+                <li class="flex items-start gap-1.5"><span class="text-pink-600 font-bold">•</span> <strong>血液系統低下：</strong> 莫名貧血、白血球不足易感染、血小板低下紫斑。</li>
+                <li class="flex items-start gap-1.5"><span class="text-pink-600 font-bold">•</span> <strong>肋膜或心包膜炎：</strong> 深呼吸或平躺時胸口劇烈牽扯刺痛。</li>
+              </ul>
+            </div>
+            <div class="mt-4 pt-3 border-t border-pink-200/60 text-[11px] text-pink-700 font-medium">
+              需特別定期追蹤尿蛋白與抗 dsDNA 抗體
+            </div>
+          </div>
+
+          <!-- Card 2: Sjögren's Special -->
+          <div class="symptom-card sjogren bg-blue-50/60 border border-blue-200 rounded-xl p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-blue-200 text-blue-800">乾燥症 (SS) 典型表現</span>
+                <i data-lucide="droplet-off" class="w-4 h-4 text-blue-600"></i>
+              </div>
+              <h4 class="font-bold text-slate-900 text-base mb-2">外分泌腺體衰竭</h4>
+              <ul class="text-xs text-slate-700 space-y-2 leading-relaxed">
+                <li class="flex items-start gap-1.5"><span class="text-blue-600 font-bold">•</span> <strong>乾性角結膜炎：</strong> 眼睛乾澀如砂礫磨眼、畏光、充血，不能戴隱形眼鏡。</li>
+                <li class="flex items-start gap-1.5"><span class="text-blue-600 font-bold">•</span> <strong>口乾與齲齒增加：</strong> 吞乾硬食物需配水，牙齦發炎、短期內蛀牙暴增。</li>
+                <li class="flex items-start gap-1.5"><span class="text-blue-600 font-bold">•</span> <strong>腺體腫痛：</strong> 雙側或單側腮腺、頜下腺無痛或微痛腫大。</li>
+                <li class="flex items-start gap-1.5"><span class="text-blue-600 font-bold">•</span> <strong>呼吸道與皮膚乾燥：</strong> 無痰乾咳、喉嚨搔癢、女性陰道黏膜乾澀疼痛。</li>
+              </ul>
+            </div>
+            <div class="mt-4 pt-3 border-t border-blue-200/60 text-[11px] text-blue-700 font-medium">
+              需每 3~6 個月定期看牙科洗牙及眼科淚液檢測
+            </div>
+          </div>
+
+          <!-- Card 3: Overlap -->
+          <div class="symptom-card overlap bg-purple-50/60 border border-purple-200 rounded-xl p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-purple-200 text-purple-800">重疊共有表現</span>
+                <i data-lucide="shuffle" class="w-4 h-4 text-purple-600"></i>
+              </div>
+              <h4 class="font-bold text-slate-900 text-base mb-2">全身免疫發炎反應</h4>
+              <ul class="text-xs text-slate-700 space-y-2 leading-relaxed">
+                <li class="flex items-start gap-1.5"><span class="text-purple-600 font-bold">•</span> <strong>頑固型慢性疲勞：</strong> 即使睡滿 8 小時仍感全身沉重虛脫。</li>
+                <li class="flex items-start gap-1.5"><span class="text-purple-600 font-bold">•</span> <strong>游走性關節肌肉痛：</strong> 對稱性手指、手腕、膝蓋痠痛或晨間僵硬。</li>
+                <li class="flex items-start gap-1.5"><span class="text-purple-600 font-bold">•</span> <strong>雷諾氏現象（Raynaud）：</strong> 天冷或緊張時手指變白、青紫、回溫潮紅。</li>
+                <li class="flex items-start gap-1.5"><span class="text-purple-600 font-bold">•</span> <strong>長期不明低溫發燒：</strong> 體溫在 37.3°C~38°C 徘徊，非感染所致。</li>
+              </ul>
+            </div>
+            <div class="mt-4 pt-3 border-t border-purple-200/60 text-[11px] text-purple-700 font-medium">
+              兩者均可能檢驗出抗 SSA/Ro 或 SSB/La 抗體
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Self-Assessment Tool -->
+        <div class="mt-8 pt-6 border-t border-slate-200">
+          <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="clipboard-check" class="w-5 h-5 text-teal-600"></i>
+                近期症狀自我簡易檢視量表
+              </h3>
+              <span class="text-xs text-slate-500">供回診時與醫師討論參考，非醫療診斷依據</span>
+            </div>
+            <p class="text-xs text-slate-600 mb-4">勾選您在過去兩週內反覆出現或持續困擾的不適情況：</p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs" id="quizQuestionsContainer">
+              <!-- Checkboxes inserted here -->
+            </div>
+
+            <div class="mt-4 p-4 rounded-xl bg-white border border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3">
+              <div>
+                <span class="text-xs text-slate-500">已勾選警訊項目：</span>
+                <span id="quizScoreText" class="font-bold text-slate-900 text-sm ml-1">0 項</span>
+                <div id="quizEvaluation" class="text-xs text-slate-600 mt-0.5">尚未勾選任何項目。</div>
+              </div>
+              <button onclick="copyQuizResultsToNotes()" class="px-3.5 py-1.5 text-xs font-semibold bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition shadow-sm flex items-center gap-1">
+                <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> 加入就醫備忘錄
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: MEDICATION GUIDE & MONITORING ==================== -->
+    <section id="tab-meds" class="tab-pane hidden space-y-6">
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="pill" class="w-6 h-6 text-teal-600"></i>
+              自體免疫現代用藥指南與安全守則
+            </h2>
+            <p class="text-slate-500 text-sm mt-1">
+              藥物治療目標：迅速撲滅急性發炎、守住臟器機能、預防復發並邁向長期緩解。
+            </p>
+          </div>
+          <div class="relative w-full md:w-64">
+            <input type="text" id="medSearchInput" onkeyup="filterMedications()" placeholder="搜尋藥名 (如 奎寧、移護寧)..." class="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5"></i>
+          </div>
+        </div>
+
+        <!-- Medication Category Badges -->
+        <div class="flex flex-wrap gap-2 mb-6" id="medCategoryFilter">
+          <button onclick="filterMedType('all')" class="med-tag-btn active px-3 py-1 rounded-full text-xs font-semibold bg-teal-600 text-white">全部藥物</button>
+          <button onclick="filterMedType('hcq')" class="med-tag-btn px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">基石奎寧 (HCQ)</button>
+          <button onclick="filterMedType('steroids')" class="med-tag-btn px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">皮質類固醇</button>
+          <button onclick="filterMedType('immunosuppressants')" class="med-tag-btn px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">免疫抑制劑</button>
+          <button onclick="filterMedType('biologics')" class="med-tag-btn px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">標靶與生物製劑</button>
+          <button onclick="filterMedType('sjogren-meds')" class="med-tag-btn px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">乾燥症分泌刺激劑</button>
+        </div>
+
+        <!-- Medications Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="medicationsContainer">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Essential Medication Safety Box -->
+        <div class="mt-8 p-4 rounded-xl bg-amber-50/80 border border-amber-200">
+          <h4 class="font-bold text-amber-900 text-sm flex items-center gap-1.5 mb-2">
+            <i data-lucide="alert-circle" class="w-4 h-4 text-amber-600"></i> 用藥安全三大鐵律
+          </h4>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-amber-900/90 leading-relaxed">
+            <div class="bg-white/80 p-3 rounded-lg border border-amber-100">
+              <strong>1. 不可自行停用或跳吃類固醇：</strong>
+              若因害怕月亮臉而擅自停藥，容易造成發炎反彈與急性腎上腺衰竭危象。
+            </div>
+            <div class="bg-white/80 p-3 rounded-lg border border-amber-100">
+              <strong>2. 奎寧長期使用者定期驗眼：</strong>
+              羥氯喹是預防復發的守門神，建議每年安排一次高解析視網膜斷層（OCT）與視野檢查。
+            </div>
+            <div class="bg-white/80 p-3 rounded-lg border border-amber-100">
+              <strong>3. 感染期間立即主動通報：</strong>
+              服用免疫抑制劑期間若出現發燒（≥38°C）、嚴重喉嚨痛或泌尿道灼痛，請勿延遲就醫。
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 4: DIET TRAFFIC LIGHT ==================== -->
+    <section id="tab-diet" class="tab-pane hidden space-y-6">
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+        <div class="max-w-3xl mb-6">
+          <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+            <i data-lucide="utensils" class="w-6 h-6 text-teal-600"></i>
+            自體免疫飲食紅綠燈：吃對營養，遠離地雷
+          </h2>
+          <p class="text-slate-500 text-sm mt-1">
+            並非所有「養生補品」都適合自體免疫病友。許多強調「活化免疫」的草本成分反倒可能促使狼瘡復發！
+          </p>
+        </div>
+
+        <!-- Traffic Light Sections -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Red Light (Danger/Avoid) -->
+          <div class="border-2 border-rose-200 bg-rose-50/40 rounded-2xl p-5 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between pb-3 border-b border-rose-200">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-600 text-white font-bold text-xs shadow-sm">
+                  <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span> 紅燈：絕對禁忌／嚴禁大補
+                </span>
+                <i data-lucide="ban" class="w-5 h-5 text-rose-600"></i>
+              </div>
+              <p class="text-xs text-rose-800 font-medium mt-3 mb-4">此類成分具有活化免疫系統或直接誘發自體抗體的實證風險：</p>
+
+              <div class="space-y-3 text-xs">
+                <div class="bg-white p-3 rounded-xl border border-rose-100 shadow-2xs">
+                  <div class="font-bold text-rose-950 flex items-center gap-1">
+                    <span class="text-rose-600 font-black">✕</span> 苜蓿芽（Alfalfa sprouts）
+                  </div>
+                  <p class="text-slate-600 mt-1">
+                    含有<strong>刀豆胺酸（L-canavanine）</strong>，會異常活化人體 T 細胞，醫學文獻證實可能誘發或大幅加重紅斑性狼瘡病情。生菜沙拉、苜蓿芽手捲請務必避開。
+                  </p>
+                </div>
+
+                <div class="bg-white p-3 rounded-xl border border-rose-100 shadow-2xs">
+                  <div class="font-bold text-rose-950 flex items-center gap-1">
+                    <span class="text-rose-600 font-black">✕</span> 增強免疫草本補品
+                  </div>
+                  <p class="text-slate-600 mt-1">
+                    <strong>人參、靈芝、黃耆、冬蟲夏草、蜂膠、紫錐花</strong>。自體免疫病是免疫力過亢而非低落，強行大補等同火上加油。
+                  </p>
+                </div>
+
+                <div class="bg-white p-3 rounded-xl border border-rose-100 shadow-2xs">
+                  <div class="font-bold text-rose-950 flex items-center gap-1">
+                    <span class="text-rose-600 font-black">✕</span> 生食與未熟肉蛋
+                  </div>
+                  <p class="text-slate-600 mt-1">
+                    生魚片、半熟蛋、生蠔易帶有沙門氏菌或李斯特菌，對於長期使用類固醇與免疫抑制劑者具極高敗血症風險。
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-rose-100 text-[11px] text-rose-700">
+              外食聚餐前請主動告知不吃苜蓿芽與生冷海鮮
+            </div>
+          </div>
+
+          <!-- Yellow Light (Caution/Limit) -->
+          <div class="border-2 border-amber-200 bg-amber-50/40 rounded-2xl p-5 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between pb-3 border-b border-amber-200">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500 text-white font-bold text-xs shadow-sm">
+                  <span class="w-2 h-2 rounded-full bg-white"></span> 黃燈：適量斟酌／因人而異
+                </span>
+                <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600"></i>
+              </div>
+              <p class="text-xs text-amber-900 font-medium mt-3 mb-4">需根據個別器官侵犯程度與陽光暴露時機謹慎攝取：</p>
+
+              <div class="space-y-3 text-xs">
+                <div class="bg-white p-3 rounded-xl border border-amber-100 shadow-2xs">
+                  <div class="font-bold text-amber-950 flex items-center gap-1">
+                    <span class="text-amber-600 font-bold">▲</span> 感光性蔬菜（大量戶外日前）
+                  </div>
+                  <p class="text-slate-600 mt-1">
+                    芹菜、九層塔、香菜含微量香豆素。一般做調味無妨，但應避免在戶外大艷陽活動前大量打成青汁飲用。
+                  </p>
+                </div>
+
+                <div class="bg-white p-3 rounded-xl border border-amber-100 shadow-2xs">
+                  <div class="font-bold text-amber-950 flex items-center gap-1">
+                    <span class="text-amber-600 font-bold">▲</span> 高鈉與精製加工品
+                  </div>
+                  <p class="text-slate-600 mt-1">
+                    有<strong>狼瘡腎炎、高血壓或正在服用高劑量類固醇</strong>者，鈉滯留會加劇下肢水腫，應採低鹽飲食。
+                  </p>
+                </div>
+
+                <div class="bg-white p-3 rounded-xl border border-amber-100 shadow-2xs">
+                  <div class="font-bold text-amber-950 flex items-center gap-1">
+                    <span class="text-amber-600 font-bold">▲</span> 刺激辛辣與太燙硬食物
+                  </div>
+                  <p class="text-slate-600 mt-1">
+                    乾燥症病友口腔黏膜缺乏唾液屏障，麻辣鍋、油炸硬餅乾易刮傷口腔導致黏膜潰瘍及口角炎。
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-amber-100 text-[11px] text-amber-800">
+              腎功能指標（eGFR / 蛋白尿）異常者請遵從腎臟營養師指導
+            </div>
+          </div>
+
+          <!-- Green Light (Safe/Recommended) -->
+          <div class="border-2 border-emerald-200 bg-emerald-50/40 rounded-2xl p-5 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between pb-3 border-b border-emerald-200">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600 text-white font-bold text-xs shadow-sm">
+                  <span class="w-2 h-2 rounded-full bg-white"></span> 綠燈：優選抗發炎營養
+                </span>
+                <i data-lucide="check" class="w-5 h-5 text-emerald-600"></i>
+              </div>
+              <p class="text-xs text-emerald-900 font-medium mt-3 mb-4">以地中海飲食為基石，協助平緩體內氧化發炎壓力：</p>
+
+              <div class="space-y-3 text-xs">
+                <div class="bg-white p-3 rounded-xl border border-emerald-100 shadow-2xs">
+                  <div class="font-bold text-emerald-950 flex items-center gap-1">
+                    <span class="text-emerald-600 font-bold">✓</span> Omega-3 優質脂肪酸
+                  </div>
+                  <p class="text-slate-600 mt-1">
+                    鮭魚、鯖魚、亞麻仁籽油、橄欖油。有助於下調前列腺素發炎路徑，保護心血管與關節健康。
+                  </p>
+                </div>
+
+                <div class="bg-white p-3 rounded-xl border border-emerald-100 shadow-2xs">
+                  <div class="font-bold text-emerald-950 flex items-center gap-1">
+                    <span class="text-emerald-600 font-bold">✓</span> 彩虹蔬果與花青素
+                  </div>
+                  <p class="text-slate-600 mt-1">
+                    藍莓、蔓越莓、甜椒、深綠十字花科蔬菜（煮熟食用），富含生物類黃酮，支援細胞抗氧化力。
+                  </p>
+                </div>
+
+                <div class="bg-white p-3 rounded-xl border border-emerald-100 shadow-2xs">
+                  <div class="font-bold text-emerald-950 flex items-center gap-1">
+                    <span class="text-emerald-600 font-bold">✓</span> 鈣質與維生素 D3
+                  </div>
+                  <p class="text-slate-600 mt-1">
+                    因嚴格防曬少照太陽，加上類固醇會加速骨質流失，建議每日補充足量鈣（1000~1200mg）與 D3（800~2000 IU）。
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-emerald-100 text-[11px] text-emerald-800">
+              天然食物為優先，非必要不隨意使用成分不明的複方膠囊
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 5: LIFESTYLE & COMPREHENSIVE CARE ==================== -->
+    <section id="tab-lifestyle" class="tab-pane hidden space-y-6">
+      <!-- Care Modules Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Module 1: Strict Sun Protection -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
+              <i data-lucide="sun-medium" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-900 text-base">抗紫外線（UV）嚴格防護工程</h3>
+              <p class="text-xs text-slate-500">SLE 患者不可妥協的護身底線</p>
+            </div>
+          </div>
+          <div class="space-y-3 text-xs text-slate-700 leading-relaxed">
+            <p>
+              紫外線（UVA/UVB）會造成角質形成細胞凋亡，使細胞核內的 DNA 與自體抗原暴露，直接觸發自體抗體攻擊，引起全身發炎及腎臟復發。
+            </p>
+            <div class="bg-amber-50/70 p-3.5 rounded-xl border border-amber-200 space-y-2">
+              <div class="font-semibold text-amber-900">實戰防曬 4 大指標：</div>
+              <div class="flex items-start gap-2">
+                <span class="font-bold text-amber-600">1.</span>
+                <span><strong>SPF 50+ / PA++++：</strong> 出門前 20 分鐘擦足劑量（全臉約 10 元硬幣大小），每 2 小時補擦一次。</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="font-bold text-amber-600">2.</span>
+                <span><strong>物理性遮蔽：</strong> 選用 UPF 50+ 認證之寬邊防曬帽、抗 UV 陽傘、透氣防曬長袖外套。</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="font-bold text-amber-600">3.</span>
+                <span><strong>黃金時段避光：</strong> 上午 10:00 至下午 15:00 紫外線指數常達過量級，應盡量減少戶外曝曬。</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="font-bold text-amber-600">4.</span>
+                <span><strong>室內與車內暗藏光源：</strong> 鹵素燈泡、汽車未貼隔熱紙之車窗亦有 UVA，應加裝抗 UV 隔熱膜。</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Module 2: Dry Eyes Care -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
+              <i data-lucide="eye" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-900 text-base">眼部防乾與角膜守護</h3>
+              <p class="text-xs text-slate-500">乾燥症角結膜病變的對策</p>
+            </div>
+          </div>
+          <div class="space-y-3 text-xs text-slate-700 leading-relaxed">
+            <p>
+              淚膜缺乏會造成角膜上皮點狀剝落、刺痛畏光，甚至造成角膜潰瘍。
+            </p>
+            <div class="bg-blue-50/70 p-3.5 rounded-xl border border-blue-200 space-y-2">
+              <div class="font-semibold text-blue-900">護眼實務錦囊：</div>
+              <div class="flex items-start gap-2">
+                <span class="font-bold text-blue-600">•</span>
+                <span><strong>選用單支無防腐劑人工淚液：</strong> 每天使用次數頻繁者，防腐劑可能堆積毒害角膜，請指名單支拋棄式。</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="font-bold text-blue-600">•</span>
+                <span><strong>避開直吹風口：</strong> 汽車冷氣口、電風扇不可直吹臉龐；冷氣房可擺設超音波加濕器（維持 55% 濕度）。</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="font-bold text-blue-600">•</span>
+                <span><strong>睡前凝膠或眼藥膏：</strong> 改善夜間睡眠眼瞼微張引起的晨起眼乾刺痛。</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="font-bold text-blue-600">•</span>
+                <span><strong>落實「20-20-20」原則：</strong> 使用螢幕 20 分鐘，遠眺 20 呎（6 公尺）外 20 秒，刻意完全閉眼。</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 flex justify-end">
+            <button onclick="openTimerModal()" class="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1">
+              <i data-lucide="play-circle" class="w-4 h-4"></i> 開啟 20-20-20 護眼計時鈴
+            </button>
+          </div>
+        </div>
+
+        <!-- Module 3: Oral & Dental Protection -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center">
+              <i data-lucide="smile" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-900 text-base">口腔保濕與防齲護齒行動</h3>
+              <p class="text-xs text-slate-500">預防乾燥症「猛爆性蛀牙」</p>
+            </div>
+          </div>
+          <div class="space-y-3 text-xs text-slate-700 leading-relaxed">
+            <p>
+              唾液含有天然溶菌酶、免疫球蛋白及中和胃酸的重碳酸鹽。唾液驟減會使牙齒脫鈣速度倍增。
+            </p>
+            <div class="bg-teal-50/70 p-3.5 rounded-xl border border-teal-200 space-y-2">
+              <div class="font-semibold text-teal-900">口腔護理關鍵技巧：</div>
+              <div class="flex items-start gap-2">
+                <span class="font-bold text-teal-600">✓</span>
+                <span><strong>含氟牙膏（≥1450 ppm）+ 牙線：</strong> 餐後及睡前必刷牙，配合含氟漱口水（不含酒精）。</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="font-bold text-teal-600">✓</span>
+                <span><strong>定期牙科專業塗氟：</strong> 每 3~6 個月回診牙科洗牙與塗高濃度氟漆。</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="font-bold text-teal-600">✓</span>
+                <span><strong>正確補水心法：</strong> 「含著小口潤濕」，勿大口猛灌沖洗天然唾液；可含無糖木糖醇口香糖刺激分泌。</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Module 4: Infection & Vaccines -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center">
+              <i data-lucide="shield-check" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-900 text-base">感染防護與疫苗接種守則</h3>
+              <p class="text-xs text-slate-500">免疫力低下時的防護盾</p>
+            </div>
+          </div>
+          <div class="space-y-3 text-xs text-slate-700 leading-relaxed">
+            <p>
+              感染是導致自體免疫疾病急性發作或生命危險的首要禍首。
+            </p>
+            <div class="bg-indigo-50/70 p-3.5 rounded-xl border border-indigo-200 space-y-2">
+              <div class="font-semibold text-indigo-900">接種與生活準則：</div>
+              <div class="flex items-start gap-2">
+                <span class="font-bold text-emerald-600">【強烈建議】</span>
+                <span><strong>非活性疫苗：</strong> 流感疫苗、結合型肺炎鏈球菌疫苗（PCV13/15/20）、重組型帶狀疱疹疫苗（欣剋疹 Shingrix）。</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="font-bold text-rose-600">【嚴格禁忌】</span>
+                <span><strong>活性減毒疫苗：</strong> 麻疹水痘 MMR、黃熱病、口服小兒麻痺等。免疫抑制劑使用期間絕對不可施打！</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="font-bold text-indigo-600">【日常衛生】</span>
+                <span>出入醫院或擁擠處配戴口罩，進食前嚴格洗手，寵物排泄物盡量請家人代為清理。</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 6: LAB TESTS & RED FLAGS ==================== -->
+    <section id="tab-redflags" class="tab-pane hidden space-y-6">
+      <!-- Red Flags Alert Box -->
+      <div class="bg-gradient-to-r from-rose-600 to-red-700 rounded-2xl p-6 text-white shadow-md">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
+            <i data-lucide="alert-triangle" class="w-6 h-6 text-white"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold tracking-tight">不可拖延！5 大急性警訊（Red Flags）</h2>
+            <p class="text-rose-100 text-xs">若出現下列任一徵候，代表可能正處於急性發炎或嚴重感染，請即刻回診或就醫</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mt-4 text-slate-900 text-xs">
+          <div class="bg-white rounded-xl p-3.5 shadow">
+            <div class="font-bold text-rose-600 mb-1 flex items-center gap-1">
+              <i data-lucide="thermometer" class="w-4 h-4"></i> 1. 不明高燒
+            </div>
+            <p class="text-slate-600">體溫 ≥ 38°C，伴隨畏寒、咳黃痰或排尿灼痛，需鑑別是細菌感染抑或疾病爆發。</p>
+          </div>
+          <div class="bg-white rounded-xl p-3.5 shadow">
+            <div class="font-bold text-rose-600 mb-1 flex items-center gap-1">
+              <i data-lucide="droplet" class="w-4 h-4"></i> 2. 泡泡尿與水腫
+            </div>
+            <p class="text-slate-600">晨起眼皮浮腫、雙腳壓陷水腫不退、尿液泡沫細密久久不散（狼瘡性腎炎警訊）。</p>
+          </div>
+          <div class="bg-white rounded-xl p-3.5 shadow">
+            <div class="font-bold text-rose-600 mb-1 flex items-center gap-1">
+              <i data-lucide="heart-pulse" class="w-4 h-4"></i> 3. 胸口刺痛氣喘
+            </div>
+            <p class="text-slate-600">深呼吸或平躺時胸口如針扎、呼吸困難，提防心包膜炎、肋膜炎或肺栓塞。</p>
+          </div>
+          <div class="bg-white rounded-xl p-3.5 shadow">
+            <div class="font-bold text-rose-600 mb-1 flex items-center gap-1">
+              <i data-lucide="brain" class="w-4 h-4"></i> 4. 劇烈頭痛抽搐
+            </div>
+            <p class="text-slate-600">前所未有的劇烈頭痛、視力突然模糊、肢體偏癱或性格異常（中樞神經狼瘡）。</p>
+          </div>
+          <div class="bg-white rounded-xl p-3.5 shadow">
+            <div class="font-bold text-rose-600 mb-1 flex items-center gap-1">
+              <i data-lucide="shield-alert" class="w-4 h-4"></i> 5. 異常出血紫斑
+            </div>
+            <p class="text-slate-600">皮膚冒出針點狀紅點紫斑、牙齦頻繁大片出血、解黑便（嚴重血小板低下危象）。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lab Interpretation Reference Guide -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+        <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2 mb-2">
+          <i data-lucide="flask-conical" class="w-5 h-5 text-teal-600"></i>
+          定期抽血驗尿數據：病友專用判讀速查表
+        </h3>
+        <p class="text-slate-500 text-xs mb-5">看懂抽血單上的關鍵英文代號，回診時更能與醫師有效溝通。</p>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                <th class="p-3 font-semibold rounded-tl-lg">檢驗代碼</th>
+                <th class="p-3 font-semibold">中文項目名稱</th>
+                <th class="p-3 font-semibold">常態參考值</th>
+                <th class="p-3 font-semibold">數值異常時的臨床意涵</th>
+                <th class="p-3 font-semibold rounded-tr-lg">追蹤週期建議</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-700">
+              <tr class="hover:bg-slate-50">
+                <td class="p-3 font-bold text-teal-700">C3 / C4</td>
+                <td class="p-3 font-medium">補體蛋白第 3 / 4 成分</td>
+                <td class="p-3">C3: 90~180 mg/dL<br>C4: 10~40 mg/dL</td>
+                <td class="p-3 text-rose-700 font-medium"><strong>顯著下降 ↓：</strong> 補體被大量消耗，通常代表狼瘡活性正在上升或腎炎發作！</td>
+                <td class="p-3 text-slate-500">每 3 個月</td>
+              </tr>
+              <tr class="hover:bg-slate-50">
+                <td class="p-3 font-bold text-teal-700">Anti-dsDNA</td>
+                <td class="p-3 font-medium">抗雙股螺旋 DNA 抗體</td>
+                <td class="p-3">陰性或 &lt; 10~15 IU/mL</td>
+                <td class="p-3 text-rose-700 font-medium"><strong>效價飆高 ↑：</strong> 與狼瘡活性及腎臟侵犯呈正相關，需高度警惕發炎。</td>
+                <td class="p-3 text-slate-500">每 3 個月</td>
+              </tr>
+              <tr class="hover:bg-slate-50">
+                <td class="p-3 font-bold text-teal-700">UPCR</td>
+                <td class="p-3 font-medium">尿液蛋白質/肌酸酐比值</td>
+                <td class="p-3">&lt; 150 mg/g (或 &lt; 0.2)</td>
+                <td class="p-3 text-rose-700 font-medium"><strong>指數升高 ↑：</strong> 表示腎絲球過濾孔隙受損導致蛋白尿，評估狼瘡腎炎最關鍵量化指標。</td>
+                <td class="p-3 text-slate-500">每次回診</td>
+              </tr>
+              <tr class="hover:bg-slate-50">
+                <td class="p-3 font-bold text-teal-700">CBC (WBC/Plt)</td>
+                <td class="p-3 font-medium">白血球 / 血小板計數</td>
+                <td class="p-3">WBC: 4,000~10,000<br>Plt: 15~40 萬</td>
+                <td class="p-3 text-amber-700"><strong>低下 ↓：</strong> 自體抗體破壞或藥物抑制骨髓，白血球&lt;3000易感染；血小板&lt;5萬易出血。</td>
+                <td class="p-3 text-slate-500">每次回診</td>
+              </tr>
+              <tr class="hover:bg-slate-50">
+                <td class="p-3 font-bold text-teal-700">ESR / CRP</td>
+                <td class="p-3 font-medium">紅血球沉降率 / 發炎反應蛋白</td>
+                <td class="p-3">ESR: &lt; 20 mm/hr<br>CRP: &lt; 0.5 mg/dL</td>
+                <td class="p-3 text-slate-700">反映全身發炎狀態。狼瘡活躍時常 ESR 高但 CRP 正常；若 CRP 暴衝需高度提防「細菌感染」。</td>
+                <td class="p-3 text-slate-500">每 1~3 個月</td>
+              </tr>
+              <tr class="hover:bg-slate-50">
+                <td class="p-3 font-bold text-teal-700">Anti-SSA / SSB</td>
+                <td class="p-3 font-medium">乾燥症主要自體抗體</td>
+                <td class="p-3">陰性 (Negative)</td>
+                <td class="p-3 text-slate-700">乾燥症標誌抗體。孕婦若為陽性需配合婦產科監測胎兒心臟傳導問題。</td>
+                <td class="p-3 text-slate-500">診斷與孕期追蹤</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 7: DOCTOR VISIT NOTES GENERATOR ==================== -->
+    <section id="tab-notes" class="tab-pane hidden space-y-6">
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="file-text" class="w-6 h-6 text-teal-600"></i>
+              就醫問診備忘錄・自訂清單
+            </h2>
+            <p class="text-slate-500 text-sm mt-1">
+              門診時間寶貴，提前整理想詢問的困擾與症狀，有助於與主治醫師高效率討論。
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="copyVisitNotes()" class="px-3.5 py-1.5 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-semibold shadow-sm transition flex items-center gap-1.5">
+              <i data-lucide="copy" class="w-4 h-4"></i> 一鍵複製內容
+            </button>
+            <button onclick="window.print()" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition flex items-center gap-1.5">
+              <i data-lucide="printer" class="w-4 h-4"></i> 列印清單
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Left: Input & Symptom select -->
+          <div class="lg:col-span-1 space-y-4">
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <h4 class="font-bold text-slate-800 text-xs mb-2">快速加入常見門診提問：</h4>
+              <div class="flex flex-col gap-1.5 text-xs" id="quickQuestionsPool">
+                <!-- Buttons injected by JS -->
+              </div>
+            </div>
+
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+              <h4 class="font-bold text-slate-800 text-xs">手動新增提問或記錄：</h4>
+              <input type="text" id="customNoteInput" placeholder="輸入個人問題或藥物副作用..." class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500">
+              <button onclick="addCustomNote()" class="w-full py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-semibold transition">
+                加入清單
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: Note Preview and Editor -->
+          <div class="lg:col-span-2">
+            <div class="border border-slate-200 rounded-xl p-4 bg-slate-50/50 flex flex-col h-full">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-200 mb-3">
+                <span class="text-xs font-bold text-slate-700 flex items-center gap-1">
+                  <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> 備忘清單即時預覽（可直接在框內編輯）
+                </span>
+                <button onclick="clearVisitNotes()" class="text-xs text-rose-600 hover:underline">清空清單</button>
+              </div>
+              <textarea id="visitNotesTextarea" rows="14" class="w-full p-3 text-xs sm:text-sm font-mono rounded-lg border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 leading-relaxed resize-none flex-1"></textarea>
+              <div class="text-[11px] text-slate-400 mt-2">
+                提示：點選「一鍵複製內容」後，可直接貼入手機通訊軟體或記事本備忘。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 20-20-20 Eye Care Timer Modal -->
+  <div id="timerModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 text-center relative animate-scale">
+      <button onclick="closeTimerModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="w-14 h-14 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center mx-auto mb-3">
+        <i data-lucide="eye" class="w-7 h-7"></i>
+      </div>
+      <h3 class="text-lg font-bold text-slate-900">20-20-20 護眼計時器</h3>
+      <p class="text-xs text-slate-500 mt-1 mb-4">
+        乾燥症護眼黃金法規：每看螢幕 20 分鐘，遠眺 20 呎（6公尺）外 20 秒，並深層眨眼。
+      </p>
+
+      <!-- Countdown Display -->
+      <div class="my-4 py-4 bg-slate-50 rounded-xl border border-slate-200">
+        <div id="timerCountdown" class="text-4xl font-bold font-mono text-teal-700">20:00</div>
+        <div id="timerStatus" class="text-xs text-slate-500 mt-1">準備中，請點擊開始專注</div>
+      </div>
+
+      <!-- Controls -->
+      <div class="flex items-center justify-center gap-3 mt-4">
+        <button id="btnTimerToggle" onclick="toggleEyeTimer()" class="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition shadow-sm flex items-center gap-1.5">
+          <i data-lucide="play" class="w-4 h-4"></i> 開始專注計時
+        </button>
+        <button onclick="resetEyeTimer()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition">
+          重置
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cloud Cross-Device Sync Modal -->
+  <div id="syncModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 relative">
+      <button onclick="closeSyncModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 bg-teal-100 text-teal-700 rounded-xl flex items-center justify-center">
+          <i data-lucide="cloud" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-slate-900">跨裝置雲端即時同步</h3>
+          <p class="text-xs text-slate-500">在手機、平板與電腦間無縫同步照護與日誌</p>
+        </div>
+      </div>
+
+      <!-- Current Sync Key Info Box -->
+      <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200 mb-4 space-y-2">
+        <div class="flex justify-between items-center text-xs">
+          <span class="font-semibold text-slate-700">您目前的專屬同步碼 (Sync Key)：</span>
+          <span id="syncStateBadge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">已就緒</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="text" id="currentSyncKeyDisplay" readonly class="w-full px-2.5 py-1.5 text-xs font-mono bg-white border border-slate-300 rounded-lg text-slate-800 select-all font-bold">
+          <button onclick="copySyncKey()" class="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-semibold whitespace-nowrap transition flex items-center gap-1">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i> 複製
+          </button>
+        </div>
+        <p class="text-[11px] text-slate-400 leading-normal">
+          在其他裝置開啟本網站後，貼上此代碼點擊「連線綁定」，即可完全同步此裝置的疼痛日誌與紀錄。
+        </p>
+      </div>
+
+      <!-- Bind Other Device Key Form -->
+      <div class="border-t border-slate-100 pt-4 space-y-3">
+        <h4 class="text-xs font-bold text-slate-800 flex items-center gap-1">
+          <i data-lucide="link" class="w-3.5 h-3.5 text-teal-600"></i> 在此裝置綁定其他裝置的同步碼：
+        </h4>
+        <div class="flex gap-2">
+          <input type="text" id="inputSyncKeyToBind" placeholder="貼上另一裝置的同步代碼..." class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500 text-slate-800">
+          <button onclick="bindCustomSyncKey()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold whitespace-nowrap transition">
+            綁定連線
+          </button>
+        </div>
+        <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1">
+          <span id="lastSyncedTime">最後更新：載入中...</span>
+          <button onclick="forceCloudSync()" class="text-teal-600 hover:underline font-semibold flex items-center gap-1">
+            <i data-lucide="refresh-cw" class="w-3 h-3"></i> 立即強制整理
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Box -->
+  <div id="toastMessage" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 text-white text-xs shadow-xl font-medium">
+    <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
+    <span id="toastText">訊息已更新</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-slate-500 text-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2 text-slate-700 font-semibold">
+        <i data-lucide="heart-handshake" class="w-4 h-4 text-teal-600"></i>
+        <span>舒風沐雨 照護指南平台</span>
+      </div>
+      <p class="text-center sm:text-right text-[11px] text-slate-400 max-w-xl">
+        免責聲明：本網站所提供之衛教內容僅供生活照護與健康衛教參考，不能取代專業風濕免疫專科醫師之診斷與處方。如有任何急性身體不適或藥物疑問，請立即諮詢主治醫療團隊。
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    /* ==========================================================================
+       DATA DEFINITIONS
+       ========================================================================== */
+    const DAILY_CHECKLIST_DATA = [
+      { id: 'c1', label: '出門前塗抹 SPF50+ 廣效防曬乳（全臉硬幣大小）', category: 'sun' },
+      { id: 'c2', label: '按醫囑按時服用維持藥物（如 奎寧、移護寧、類固醇）', category: 'med' },
+      { id: 'c3', label: '餐後軟毛牙刷 + 含氟牙膏（≥1450ppm）+ 牙線清潔', category: 'teeth' },
+      { id: 'c4', label: '隨身配戴抗 UV 寬邊帽、陽傘或防曬外套', category: 'sun' },
+      { id: 'c5', label: '定時分次補水滋潤口腔（少量多次，非大口牛飲）', category: 'water' },
+      { id: 'c6', label: '眼睛疲勞時補充單支無防腐劑人工淚液', category: 'eye' },
+      { id: 'c7', label: '完成至少一次 20-20-20 用眼放鬆深閉眼', category: 'eye' },
+      { id: 'c8', label: '避開高危險補品（苜蓿芽、人參、靈芝、生食）', category: 'diet' }
+    ];
+
+    const QUIZ_QUESTIONS = [
+      { id: 'q1', text: '臉頰雙側有跨過鼻樑的紅斑，曬太陽後泛紅更嚴重', type: 'SLE' },
+      { id: 'q2', text: '眼睛持續有砂礫磨擦異物感，頻繁紅眼或畏光', type: 'SS' },
+      { id: 'q3', text: '晨起雙手手指或膝蓋關節對稱性腫脹、僵硬超過 30 分鐘', type: 'BOTH' },
+      { id: 'q4', text: '吃較乾的食物（如餅乾、白飯）必須配水才能吞嚥', type: 'SS' },
+      { id: 'q5', text: '下肢雙腳出現明顯壓陷性水腫，或小便泡沫久聚不散', type: 'ALERT_SLE' },
+      { id: 'q6', text: '無感冒卻經常性不明原因低燒（體溫 37.5°C ~ 38°C）', type: 'BOTH' },
+      { id: 'q7', text: '手指在冬天或接觸冷水時迅速發白、變青紫後潮紅', type: 'BOTH' },
+      { id: 'q8', text: '雙側或單側耳下腮腺、下巴腺體反覆發脹微痛', type: 'SS' }
+    ];
+
+    const MEDICATIONS_DATA = [
+      {
+        id: 'hcq',
+        category: 'hcq',
+        name: '羥氯喹（Hydroxychloroquine, HCQ / 奎寧）',
+        brand: '必賴克瘻 (Plaquenil)',
+        tag: 'SLE 核心基石用藥',
+        desc: '透過調節抗原呈現與發炎小體抑制活性。能預防疾病復發、降低血栓發生率、保護腎臟與心血管。',
+        notes: '【重要】除非有絕對禁忌，通常建議長期維持服用。建議每年接受一次高解析眼底視網膜（OCT）與視野檢查。'
+      },
+      {
+        id: 'steroids',
+        category: 'steroids',
+        name: '普賴鬆 / 類固醇 (Prednisolone)',
+        brand: '康速龍 (Prednisolone)',
+        tag: '抗發炎主力消防員',
+        desc: '急性期快速撲滅發炎、搶救重要器官（如狼瘡腎炎、溶血性貧血）的第一線強效藥物。',
+        notes: '【重要】依醫囑緩慢遞減，切勿擅自驟停以免發生急性腎上腺衰竭危象。長期使用者需補充鈣質與維生素 D3 防骨鬆。'
+      },
+      {
+        id: 'aza',
+        category: 'immunosuppressants',
+        name: '移護寧 (Azathioprine / AZA)',
+        brand: 'Imuran',
+        tag: '免疫抑制劑 / 維持期',
+        desc: '抑制嘌呤合成，減少淋巴細胞增生，協助類固醇順利減量（Steroid-sparing）。對懷孕期間相對安全。',
+        notes: '需定期監測全血球計數（CBC）與肝功能，觀察是否有白血球降低。'
+      },
+      {
+        id: 'mmf',
+        category: 'immunosuppressants',
+        name: '山喜多 (Mycophenolate Mofetil / MMF)',
+        brand: 'CellCept',
+        tag: '狼瘡腎炎一線用藥',
+        desc: '抑制 T 與 B 淋巴球增殖，對狼瘡性腎炎有卓越的誘導緩解與長期保護功效。',
+        notes: '具致畸胎性，備孕期必須在醫師指導下提前至少 6 週停藥並換藥。服藥初期可能有腸胃不適。'
+      },
+      {
+        id: 'pilocarpine',
+        category: 'sjogren-meds',
+        name: '匹羅卡品 (Pilocarpine / 舒口特)',
+        brand: 'Salagen',
+        tag: '乾燥症副交感刺激劑',
+        desc: '刺激外分泌腺副交感受體，促進殘存腺體釋放口水與淚液，改善吞嚥困難與眼部極乾。',
+        notes: '常見暫時性副作用包含流汗增加、頻尿、輕微腹瀉或心悸，多從低劑量開始逐步調整。'
+      },
+      {
+        id: 'cevimeline',
+        category: 'sjogren-meds',
+        name: '西維美林 (Cevimeline)',
+        brand: '愛維客 (Evoxac)',
+        tag: '高選擇性副交感促泌劑',
+        desc: '高選擇性作用於 M3 受體，促進唾液分泌，相較 Pilocarpine 心血管及多汗副作用略低。',
+        notes: '氣喘或嚴重青光眼病友使用前須由醫師詳細評估。'
+      },
+      {
+        id: 'belimumab',
+        category: 'biologics',
+        name: '貝力尤單抗 (Belimumab)',
+        brand: 'Benlysta (倍力騰)',
+        tag: 'B細胞活化因子抑制劑 (生物製劑)',
+        desc: '抑制可溶性 BLyS，阻斷自體抗體過量產生，減少狼瘡復發機率並助類固醇減量。',
+        notes: '提供靜脈點滴與每週皮下注射劑型。施打前須排除急性潛在感染。'
+      },
+      {
+        id: 'anifrolumab',
+        category: 'biologics',
+        name: '阿尼弗魯單抗 (Anifrolumab)',
+        brand: 'Saphnelo',
+        tag: '第 I 型干擾素受體單株抗體',
+        desc: '專一性阻斷第一型干擾素傳導路徑，對中重度紅斑性狼瘡及頑固皮膚病灶具良好療效。',
+        notes: '施打期間需注意帶狀疱疹等病毒感染之預防。'
+      },
+      {
+        id: 'restasis',
+        category: 'sjogren-meds',
+        name: '環孢素眼用乳劑 (Cyclosporine eye drops)',
+        brand: 'Restasis (麗眼達)',
+        tag: '局部免疫抑制點眼液',
+        desc: '抑制淚腺與眼表 T 細胞發炎，促使眼睛恢復自體天然淚液製造，適用於中重度乾眼。',
+        notes: '點眼初期可能有些微刺痛感，需持續規律點用數週至數月方能顯現顯著分泌提升。'
+      }
+    ];
+
+    const QUICK_QUESTIONS_DEFAULT = [
+      '最近晨起眼皮浮腫且小便泡泡很多，需要加驗 24 小時尿蛋白嗎？',
+      '近兩週眼睛乾澀刺痛感加劇，能否開立單支裝無防腐劑人工淚液？',
+      '我目前長期服用奎寧，請問需要幫我安排年度視網膜視野檢查嗎？',
+      '關節游走性痠痛較明顯，目前的類固醇劑量需要微調嗎？',
+      '最近打算施打流感疫苗或帶狀疱疹疫苗，目前用藥有需要調整時程嗎？',
+      '如果未來有一兩年內的備孕計畫，目前的藥物配方是否安全？'
+    ];
+
+    /* ==========================================================================
+       INITIALIZATION & APP STATE
+       ========================================================================== */
+    let currentChecklistState = {};
+    let currentQuizSelection = {};
+    let eyeTimerInterval = null;
+    let eyeTimerRemaining = 20 * 60; // 20 minutes in seconds
+    let isEyeTimerRunning = false;
+
+    let journalLogs = {}; // format: { 'YYYY-MM-DD': { painScore: 0, locations: [], stiffness: '', fatigue: 3, dryness: 2, note: '', timestamp: ... } }
+    let selectedJournalDate = '';
+    let weeklyOffset = 0; // 0 = current week, -1 = previous week, etc.
+
+    /* Cloud Sync State */
+    let cloudDb = null;
+    let cloudAuth = null;
+    let cloudUser = null;
+    let activeSyncKey = '';
+    let cloudUnsubscribe = null;
+    const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'sle-ss-care-portal';
+
+    window.onload = function() {
+      // Date Display
+      const now = new Date();
+      const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' };
+      document.getElementById('currentDateDisplay').innerText = now.toLocaleDateString('zh-TW', options);
+
+      // Load Saved Checklist from LocalStorage
+      loadChecklist();
+      renderChecklist();
+
+      // Load Saved Journal Logs
+      loadJournalLogs();
+      initJournalUI();
+
+      // Render Quiz
+      renderQuiz();
+
+      // Render Medications
+      renderMedications('all');
+
+      // Initialize Visit Notes
+      initVisitNotes();
+
+      // Initialize Cloud Firebase Sync Module
+      initCloudSync();
+
+      // Initialize Lucide Icons
+      lucide.createIcons();
+    };
+
+    /* ==========================================================================
+       CLOUD PERSISTENCE & CROSS-DEVICE SYNC LOGIC (RULE 1, 2, 3 STRICT)
+       ========================================================================== */
+    async function initCloudSync() {
+      try {
+        // Initialize Sync Key from storage or generate new
+        let savedKey = localStorage.getItem('sle_ss_active_synckey');
+        if (!savedKey) {
+          savedKey = 'sle_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36).slice(-4);
+          localStorage.setItem('sle_ss_active_synckey', savedKey);
+        }
+        activeSyncKey = savedKey;
+        updateSyncModalUI();
+
+        // Check if Firebase config exists in runtime environment
+        if (typeof __firebase_config === 'undefined') {
+          updateSyncStatusBadge(false, '本機離線模式');
+          return;
+        }
+
+        const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
+        const { getAuth, signInAnonymously, signInWithCustomToken } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
+        const { getFirestore, doc, onSnapshot } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        cloudAuth = getAuth(app);
+        cloudDb = getFirestore(app);
+
+        // RULE 3: Auth Before Queries
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(cloudAuth, __initial_auth_token);
+        } else {
+          await signInAnonymously(cloudAuth);
+        }
+        cloudUser = cloudAuth.currentUser;
+
+        if (!cloudUser) {
+          updateSyncStatusBadge(false, '認證未就緒');
+          return;
+        }
+
+        // Display user identification or sync key
+        updateSyncStatusBadge(true, '雲端即時同步中');
+        subscribeToCloudRecord(activeSyncKey);
+
+      } catch (err) {
+        console.warn("Cloud sync initialization notice:", err);
+        updateSyncStatusBadge(false, '儲存於本機裝置');
+      }
+    }
+
+    async function subscribeToCloudRecord(syncKey) {
+      if (!cloudDb || !cloudUser) return;
+
+      const { doc, onSnapshot } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+
+      if (cloudUnsubscribe) {
+        cloudUnsubscribe();
+      }
+
+      // RULE 1: Strict Paths - public shared data path
+      const docRef = doc(cloudDb, 'artifacts', APP_ID, 'public', 'data', 'sync_journals', syncKey);
+
+      cloudUnsubscribe = onSnapshot(docRef, (snap) => {
+        if (snap.exists()) {
+          const remoteData = snap.data();
+          if (remoteData) {
+            let hasChanged = false;
+            // Merge pain journal logs
+            if (remoteData.journalLogs) {
+              journalLogs = { ...journalLogs, ...remoteData.journalLogs };
+              saveJournalLogsToStorage();
+              hasChanged = true;
+            }
+            // Merge daily checklist
+            if (remoteData.currentChecklistState) {
+              currentChecklistState = { ...currentChecklistState, ...remoteData.currentChecklistState };
+              saveChecklist();
+              renderChecklist();
+            }
+            // Merge visit notes if remote is newer
+            if (remoteData.visitNotes && document.getElementById('visitNotesTextarea')) {
+              const localText = document.getElementById('visitNotesTextarea').value;
+              if (!localText || localText.length < remoteData.visitNotes.length) {
+                document.getElementById('visitNotesTextarea').value = remoteData.visitNotes;
+              }
+            }
+
+            if (hasChanged) {
+              renderWeeklyView();
+              loadLogIntoForm(selectedJournalDate);
+            }
+
+            const timeStr = remoteData.updatedAt ? new Date(remoteData.updatedAt).toLocaleTimeString() : new Date().toLocaleTimeString();
+            document.getElementById('lastSyncedTime').innerText = `最後更新：${timeStr}`;
+            updateSyncStatusBadge(true, '已與雲端同步');
+          }
+        } else {
+          // Document doesn't exist yet on cloud, push current local data to initialize
+          pushAllDataToCloud();
+        }
+      }, (err) => {
+        console.warn("Snapshot subscription notice:", err);
+        updateSyncStatusBadge(false, '連線受阻・使用快取');
+      });
+    }
+
+    async function pushAllDataToCloud() {
+      if (!cloudDb || !cloudUser || !activeSyncKey) return;
+      try {
+        const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+        const docRef = doc(cloudDb, 'artifacts', APP_ID, 'public', 'data', 'sync_journals', activeSyncKey);
+
+        const currentNotes = document.getElementById('visitNotesTextarea') ? document.getElementById('visitNotesTextarea').value : '';
+
+        await setDoc(docRef, {
+          journalLogs,
+          currentChecklistState,
+          visitNotes: currentNotes,
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+
+        document.getElementById('lastSyncedTime').innerText = `最後更新：${new Date().toLocaleTimeString()}`;
+      } catch (e) {
+        console.warn("Cloud push error:", e);
+      }
+    }
+
+    function openSyncModal() {
+      updateSyncModalUI();
+      document.getElementById('syncModal').classList.remove('hidden');
+      document.getElementById('syncModal').classList.add('flex');
+    }
+
+    function closeSyncModal() {
+      document.getElementById('syncModal').classList.add('hidden');
+      document.getElementById('syncModal').classList.remove('flex');
+    }
+
+    function updateSyncModalUI() {
+      const displayInput = document.getElementById('currentSyncKeyDisplay');
+      if (displayInput) {
+        displayInput.value = activeSyncKey;
+      }
+    }
+
+    function copySyncKey() {
+      const displayInput = document.getElementById('currentSyncKeyDisplay');
+      displayInput.select();
+      document.execCommand('copy');
+      showToast('已複製同步代碼！請在其他裝置貼上此碼綁定');
+    }
+
+    async function bindCustomSyncKey() {
+      const input = document.getElementById('inputSyncKeyToBind');
+      const targetKey = input.value.trim();
+      if (!targetKey) {
+        showToast('請輸入有效的同步代碼');
+        return;
+      }
+
+      activeSyncKey = targetKey;
+      localStorage.setItem('sle_ss_active_synckey', targetKey);
+      updateSyncModalUI();
+      input.value = '';
+
+      showToast(`已切換同步碼為：${targetKey}，正在獲取雲端日誌...`);
+
+      if (cloudDb && cloudUser) {
+        subscribeToCloudRecord(targetKey);
+      }
+      closeSyncModal();
+    }
+
+    function forceCloudSync() {
+      pushAllDataToCloud();
+      showToast('已立即將本地資料傳送至雲端');
+    }
+
+    function updateSyncStatusBadge(isConnected, labelText) {
+      const dot = document.getElementById('syncStatusDot');
+      const text = document.getElementById('syncStatusText');
+      const btn = document.getElementById('btnSyncStatus');
+      const modalBadge = document.getElementById('syncStateBadge');
+
+      if (text) text.innerText = labelText;
+      if (modalBadge) modalBadge.innerText = isConnected ? '即時同步中' : '本機模式';
+
+      if (isConnected) {
+        dot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
+        btn.className = "flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg text-emerald-800 bg-emerald-50 hover:bg-emerald-100 transition border border-emerald-200";
+      } else {
+        dot.className = "w-2 h-2 rounded-full bg-slate-400";
+        btn.className = "flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg text-slate-700 bg-slate-100 hover:bg-slate-200 transition border border-slate-200";
+      }
+    }
+
+    /* ==========================================================================
+       PAIN & WEEKLY JOURNAL LOGIC
+       ========================================================================== */
+    function loadJournalLogs() {
+      try {
+        const saved = localStorage.getItem('sle_ss_pain_logs');
+        if (saved) {
+          journalLogs = JSON.parse(saved);
+        } else {
+          journalLogs = {};
+        }
+      } catch (e) {
+        journalLogs = {};
+      }
+    }
+
+    function saveJournalLogsToStorage() {
+      try {
+        localStorage.setItem('sle_ss_pain_logs', JSON.stringify(journalLogs));
+      } catch (e) {}
+    }
+
+    function formatDateToYYYYMMDD(d) {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function initJournalUI() {
+      const todayStr = formatDateToYYYYMMDD(new Date());
+      selectedJournalDate = todayStr;
+      const dateInput = document.getElementById('journalDateInput');
+      if (dateInput) {
+        dateInput.value = todayStr;
+      }
+      loadLogIntoForm(todayStr);
+      renderWeeklyView();
+    }
+
+    function onJournalDateChange() {
+      const dateInput = document.getElementById('journalDateInput');
+      selectedJournalDate = dateInput.value || formatDateToYYYYMMDD(new Date());
+      loadLogIntoForm(selectedJournalDate);
+    }
+
+    function loadLogIntoForm(dateStr) {
+      const log = journalLogs[dateStr];
+      const deleteBtn = document.getElementById('btnDeleteLog');
+
+      if (log) {
+        updatePainSliderUI(log.painScore);
+        document.getElementById('painRangeInput').value = log.painScore;
+        
+        // locations
+        const checkboxes = document.querySelectorAll('input[name="painLoc"]');
+        checkboxes.forEach(cb => {
+          cb.checked = (log.locations || []).includes(cb.value);
+        });
+
+        document.getElementById('stiffnessSelect').value = log.stiffness || '無僵硬';
+        document.getElementById('fatigueSelect').value = log.fatigue || '3';
+        document.getElementById('drynessRangeInput').value = log.dryness || 2;
+        document.getElementById('drynessDisplay').innerText = (log.dryness || 2) + ' 級';
+        document.getElementById('journalNoteInput').value = log.note || '';
+
+        if (deleteBtn) deleteBtn.classList.remove('hidden');
+      } else {
+        // Reset form for fresh entry
+        updatePainSliderUI(0);
+        document.getElementById('painRangeInput').value = 0;
+        document.querySelectorAll('input[name="painLoc"]').forEach(cb => cb.checked = false);
+        document.getElementById('stiffnessSelect').value = '無僵硬';
+        document.getElementById('fatigueSelect').value = '3';
+        document.getElementById('drynessRangeInput').value = 2;
+        document.getElementById('drynessDisplay').innerText = '2 級';
+        document.getElementById('journalNoteInput').value = '';
+
+        if (deleteBtn) deleteBtn.classList.add('hidden');
+      }
+    }
+
+    function updatePainSliderUI(val) {
+      val = parseInt(val, 10);
+      const badge = document.getElementById('painLevelBadge');
+      const emoji = document.getElementById('painFaceEmoji');
+
+      let text = `${val} 分・`;
+      let badgeClass = '';
+      let face = '😊';
+
+      if (val === 0) {
+        text += '完全無痛';
+        badgeClass = 'bg-emerald-100 text-emerald-800';
+        face = '😊';
+      } else if (val <= 3) {
+        text += '輕微隱痛 (不影響日常)';
+        badgeClass = 'bg-blue-100 text-blue-800';
+        face = '🙂';
+      } else if (val <= 6) {
+        text += '中度疼痛 (日常動作受限)';
+        badgeClass = 'bg-amber-100 text-amber-800';
+        face = '😣';
+      } else if (val <= 8) {
+        text += '較劇烈疼痛 (需臥床或止痛)';
+        badgeClass = 'bg-orange-100 text-orange-800';
+        face = '😫';
+      } else {
+        text += '極重度劇痛 (需緊急就醫評估)';
+        badgeClass = 'bg-rose-100 text-rose-800';
+        face = '😭';
+      }
+
+      badge.innerText = text;
+      badge.className = `px-2 py-0.5 rounded-full text-[11px] font-bold ${badgeClass}`;
+      emoji.innerText = face;
+    }
+
+    function saveDailyLog() {
+      const dateStr = selectedJournalDate || formatDateToYYYYMMDD(new Date());
+      const painScore = parseInt(document.getElementById('painRangeInput').value, 10);
+      
+      const locations = [];
+      document.querySelectorAll('input[name="painLoc"]:checked').forEach(cb => {
+        locations.push(cb.value);
+      });
+
+      const stiffness = document.getElementById('stiffnessSelect').value;
+      const fatigue = document.getElementById('fatigueSelect').value;
+      const dryness = parseInt(document.getElementById('drynessRangeInput').value, 10);
+      const note = document.getElementById('journalNoteInput').value.trim();
+
+      journalLogs[dateStr] = {
+        painScore,
+        locations,
+        stiffness,
+        fatigue,
+        dryness,
+        note,
+        updatedAt: new Date().toISOString()
+      };
+
+      saveJournalLogsToStorage();
+      renderWeeklyView();
+      document.getElementById('btnDeleteLog').classList.remove('hidden');
+      pushAllDataToCloud();
+      showToast(`已成功儲存 ${dateStr} 的健康日誌！`);
+    }
+
+    function deleteDailyLog() {
+      const dateStr = selectedJournalDate;
+      if (!journalLogs[dateStr]) return;
+
+      delete journalLogs[dateStr];
+      saveJournalLogsToStorage();
+      loadLogIntoForm(dateStr);
+      renderWeeklyView();
+      pushAllDataToCloud();
+      showToast(`已刪除 ${dateStr} 的日誌紀錄`);
+    }
+
+    function getWeekDays(offset = 0) {
+      const curr = new Date();
+      // adjust for offset weeks
+      curr.setDate(curr.getDate() + offset * 7);
+
+      // get Monday of the week (assuming Monday is start)
+      const day = curr.getDay(); // 0 is Sunday
+      const diffToMon = (day === 0 ? -6 : 1) - day;
+      const monday = new Date(curr);
+      monday.setDate(curr.getDate() + diffToMon);
+
+      const days = [];
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        days.push(d);
+      }
+      return days;
+    }
+
+    function changeWeeklyOffset(delta) {
+      weeklyOffset += delta;
+      renderWeeklyView();
+    }
+
+    function resetToCurrentWeek() {
+      weeklyOffset = 0;
+      renderWeeklyView();
+    }
+
+    function renderWeeklyView() {
+      const weekDays = getWeekDays(weeklyOffset);
+      const startStr = formatDateToYYYYMMDD(weekDays[0]);
+      const endStr = formatDateToYYYYMMDD(weekDays[6]);
+
+      // Label
+      const rangeLabel = document.getElementById('currentWeekRangeLabel');
+      if (rangeLabel) {
+        rangeLabel.innerText = `${startStr} ~ ${endStr} ${weeklyOffset === 0 ? '(本週)' : ''}`;
+      }
+
+      const dayNames = ['週一', '週二', '週三', '週四', '週五', '週六', '週日'];
+      const chartContainer = document.getElementById('weeklyTrendChart');
+      const detailsList = document.getElementById('weeklyDetailsList');
+      if (!chartContainer || !detailsList) return;
+
+      chartContainer.innerHTML = '';
+      detailsList.innerHTML = '';
+
+      let totalScore = 0;
+      let recordedCount = 0;
+      let maxScore = -1;
+      let maxDayLabel = '--';
+
+      weekDays.forEach((dateObj, idx) => {
+        const dateKey = formatDateToYYYYMMDD(dateObj);
+        const log = journalLogs[dateKey];
+        const isSelected = (dateKey === selectedJournalDate);
+
+        let score = 0;
+        let hasData = false;
+
+        if (log !== undefined) {
+          hasData = true;
+          score = log.painScore;
+          totalScore += score;
+          recordedCount++;
+          if (score > maxScore) {
+            maxScore = score;
+            maxDayLabel = `${dayNames[idx]} (${score}分)`;
+          }
+        }
+
+        // Render Bar in Chart
+        // Height: percentage based on 10 max
+        const heightPct = hasData ? Math.max((score / 10) * 100, 8) : 4;
+        let barColor = 'bg-slate-200';
+        if (hasData) {
+          if (score === 0) barColor = 'bg-emerald-500';
+          else if (score <= 3) barColor = 'bg-blue-500';
+          else if (score <= 6) barColor = 'bg-amber-500';
+          else barColor = 'bg-rose-500';
+        }
+
+        const barCol = document.createElement('div');
+        barCol.className = "flex flex-col items-center h-full justify-end group cursor-pointer";
+        barCol.title = `${dateKey} (${dayNames[idx]}): ${hasData ? score + '分' : '無紀錄'}`;
+        barCol.onclick = () => {
+          selectedJournalDate = dateKey;
+          document.getElementById('journalDateInput').value = dateKey;
+          loadLogIntoForm(dateKey);
+          renderWeeklyView();
+        };
+
+        barCol.innerHTML = `
+          <div class="text-[10px] font-bold ${hasData ? 'text-slate-800' : 'text-slate-300'} mb-1 group-hover:text-rose-600 transition">
+            ${hasData ? score : '-'}
+          </div>
+          <div class="w-full max-w-[28px] rounded-t-lg transition-all duration-300 ${barColor} ${isSelected ? 'ring-2 ring-slate-900 ring-offset-1' : ''}" style="height: ${heightPct}%"></div>
+          <div class="text-[11px] mt-1.5 font-medium ${isSelected ? 'text-rose-600 font-bold' : 'text-slate-500'}">
+            ${dayNames[idx]}
+          </div>
+        `;
+        chartContainer.appendChild(barCol);
+
+        // Render Day Detail Item
+        const detailRow = document.createElement('div');
+        detailRow.className = `p-2.5 rounded-xl border text-xs flex items-center justify-between cursor-pointer transition ${isSelected ? 'bg-rose-50/50 border-rose-200' : 'bg-white border-slate-200 hover:bg-slate-50'}`;
+        detailRow.onclick = () => {
+          selectedJournalDate = dateKey;
+          document.getElementById('journalDateInput').value = dateKey;
+          loadLogIntoForm(dateKey);
+          renderWeeklyView();
+        };
+
+        if (hasData) {
+          const locsText = log.locations && log.locations.length > 0 ? log.locations.join('、') : '無特定關節部位';
+          const notePreview = log.note ? `「${log.note}」` : '';
+          detailRow.innerHTML = `
+            <div class="flex items-center gap-2.5">
+              <span class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs ${score > 6 ? 'bg-rose-100 text-rose-700' : score > 3 ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-700'}">
+                ${score}分
+              </span>
+              <div>
+                <div class="font-bold text-slate-800 flex items-center gap-1.5">
+                  <span>${dateKey} (${dayNames[idx]})</span>
+                  <span class="text-[10px] font-normal px-1.5 py-0.2 rounded bg-slate-100 text-slate-600">僵硬: ${log.stiffness || '無'}</span>
+                </div>
+                <div class="text-slate-500 text-[11px] truncate max-w-xs sm:max-w-md">
+                  ${locsText} ${notePreview}
+                </div>
+              </div>
+            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+          `;
+        } else {
+          detailRow.innerHTML = `
+            <div class="flex items-center gap-2.5 text-slate-400">
+              <span class="w-8 h-8 rounded-lg border border-dashed border-slate-300 flex items-center justify-center text-[11px]">未記</span>
+              <span class="font-medium">${dateKey} (${dayNames[idx]}) - 尚無紀錄</span>
+            </div>
+            <span class="text-[11px] text-teal-600 font-semibold hover:underline">點此填寫</span>
+          `;
+        }
+        detailsList.appendChild(detailRow);
+      });
+
+      // Update Summary Cards
+      const avgPainEl = document.getElementById('weeklyAvgPain');
+      const maxPainEl = document.getElementById('weeklyMaxPain');
+      const loggedCountEl = document.getElementById('weeklyLoggedCount');
+
+      if (avgPainEl) {
+        avgPainEl.innerText = recordedCount > 0 ? (totalScore / recordedCount).toFixed(1) + ' 分' : '--';
+      }
+      if (maxPainEl) {
+        maxPainEl.innerText = recordedCount > 0 ? maxDayLabel : '--';
+      }
+      if (loggedCountEl) {
+        loggedCountEl.innerText = `${recordedCount} / 7 天`;
+      }
+
+      lucide.createIcons();
+    }
+
+    function exportWeeklyReportToNotes() {
+      const weekDays = getWeekDays(weeklyOffset);
+      const startStr = formatDateToYYYYMMDD(weekDays[0]);
+      const endStr = formatDateToYYYYMMDD(weekDays[6]);
+
+      let totalScore = 0;
+      let recordedCount = 0;
+      let lines = [];
+      const dayNames = ['週一', '週二', '週三', '週四', '週五', '週六', '週日'];
+
+      weekDays.forEach((dateObj, idx) => {
+        const key = formatDateToYYYYMMDD(dateObj);
+        const log = journalLogs[key];
+        if (log) {
+          recordedCount++;
+          totalScore += log.painScore;
+          const locs = log.locations && log.locations.length ? `[${log.locations.join('/')}]` : '';
+          const notePart = log.note ? ` | 備註: ${log.note}` : '';
+          lines.push(`• ${key} (${dayNames[idx]}): 疼痛 ${log.painScore}分 | 晨僵: ${log.stiffness || '無'} ${locs}${notePart}`);
+        }
+      });
+
+      if (recordedCount === 0) {
+        showToast('本週尚無任何日誌可供匯出，請先填寫紀錄');
+        return;
+      }
+
+      const avg = (totalScore / recordedCount).toFixed(1);
+      const report = `
+【當週疼痛與症狀週記報告 (${startStr} ~ ${endStr})】
+• 紀錄天數：${recordedCount} / 7 天
+• 當週平均疼痛程度：${avg} / 10 分
+• 每日詳細紀錄：
+${lines.join('\n')}
+`;
+
+      const notesTextarea = document.getElementById('visitNotesTextarea');
+      notesTextarea.value = notesTextarea.value.trim() + '\n' + report;
+      showToast('已將當週疼痛週記成功匯入就醫備忘錄！');
+      switchTab('tab-notes');
+    }
+
+    /* ==========================================================================
+       NAVIGATION TABS
+       ========================================================================== */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      const activePane = document.getElementById(tabId);
+      if (activePane) activePane.classList.remove('hidden');
+
+      document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('tab-active'));
+      const activeBtn = document.getElementById('btn-' + tabId);
+      if (activeBtn) activeBtn.classList.add('tab-active');
+
+      // Scroll top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ==========================================================================
+       DAILY CHECKLIST LOGIC
+       ========================================================================== */
+    function loadChecklist() {
+      try {
+        const saved = localStorage.getItem('sle_ss_checklist_today');
+        if (saved) {
+          currentChecklistState = JSON.parse(saved);
+        }
+      } catch (e) {
+        currentChecklistState = {};
+      }
+    }
+
+    function saveChecklist() {
+      try {
+        localStorage.setItem('sle_ss_checklist_today', JSON.stringify(currentChecklistState));
+      } catch (e) {}
+    }
+
+    function toggleChecklistItem(id) {
+      currentChecklistState[id] = !currentChecklistState[id];
+      saveChecklist();
+      updateChecklistProgress();
+      pushAllDataToCloud();
+      showToast(currentChecklistState[id] ? '已完成此項打卡！' : '已取消打卡');
+    }
+
+    function renderChecklist() {
+      const container = document.getElementById('checklistContainer');
+      container.innerHTML = '';
+
+      DAILY_CHECKLIST_DATA.forEach(item => {
+        const isChecked = !!currentChecklistState[item.id];
+        const div = document.createElement('div');
+        div.className = `p-3 rounded-xl border transition cursor-pointer flex items-start gap-2.5 ${isChecked ? 'bg-teal-50/60 border-teal-200 text-teal-900' : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'}`;
+        div.onclick = () => {
+          const chk = document.getElementById('chk_' + item.id);
+          chk.checked = !chk.checked;
+          toggleChecklistItem(item.id);
+          renderChecklist();
+        };
+
+        div.innerHTML = `
+          <input type="checkbox" id="chk_${item.id}" ${isChecked ? 'checked' : ''} class="mt-0.5 rounded text-teal-600 focus:ring-teal-500 cursor-pointer pointer-events-none">
+          <span class="text-xs leading-snug font-medium select-none ${isChecked ? 'line-through opacity-80' : ''}">${item.label}</span>
+        `;
+        container.appendChild(div);
+      });
+
+      updateChecklistProgress();
+    }
+
+    function updateChecklistProgress() {
+      const total = DAILY_CHECKLIST_DATA.length;
+      const checkedCount = Object.values(currentChecklistState).filter(Boolean).length;
+      const pct = Math.round((checkedCount / total) * 100);
+
+      document.getElementById('checklistPercentage').innerText = pct + '%';
+      document.getElementById('checklistProgressBar').style.width = pct + '%';
+    }
+
+    function resetDailyChecklist() {
+      currentChecklistState = {};
+      saveChecklist();
+      renderChecklist();
+      pushAllDataToCloud();
+      showToast('今日打卡已重設');
+    }
+
+    /* ==========================================================================
+       SYMPTOMS & QUIZ
+       ========================================================================== */
+    function filterSymptomCategory(cat) {
+      document.querySelectorAll('.symptom-filter-btn').forEach(btn => {
+        btn.classList.remove('bg-slate-900', 'text-white');
+        btn.classList.add('bg-slate-100', 'text-slate-700');
+      });
+      event.target.classList.remove('bg-slate-100', 'text-slate-700');
+      event.target.classList.add('bg-slate-900', 'text-white');
+
+      const cards = document.querySelectorAll('.symptom-card');
+      cards.forEach(card => {
+        if (cat === 'all') {
+          card.classList.remove('hidden');
+        } else if (card.classList.contains(cat)) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    }
+
+    function renderQuiz() {
+      const container = document.getElementById('quizQuestionsContainer');
+      container.innerHTML = '';
+
+      QUIZ_QUESTIONS.forEach(q => {
+        const div = document.createElement('label');
+        div.className = "flex items-start gap-2 p-2 rounded-lg hover:bg-slate-100 cursor-pointer transition border border-transparent hover:border-slate-200";
+        div.innerHTML = `
+          <input type="checkbox" onchange="onQuizChange('${q.id}', this.checked)" class="mt-0.5 rounded text-teal-600 focus:ring-teal-500">
+          <span class="text-slate-700 select-none">${q.text}</span>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function onQuizChange(qid, isChecked) {
+      currentQuizSelection[qid] = isChecked;
+      const count = Object.values(currentQuizSelection).filter(Boolean).length;
+      document.getElementById('quizScoreText').innerText = count + ' 項';
+
+      const evalEl = document.getElementById('quizEvaluation');
+      if (count === 0) {
+        evalEl.innerText = '目前無明顯勾選症狀，請繼續保持良好生活作息。';
+        evalEl.className = 'text-xs text-slate-500 mt-0.5';
+      } else if (count <= 2) {
+        evalEl.innerText = '屬於輕度或單純腺體困擾，可於下次常規門診向醫師反饋。';
+        evalEl.className = 'text-xs text-blue-600 font-medium mt-0.5';
+      } else if (count <= 4) {
+        evalEl.innerText = '出現多項活動期表徵（如關節、口眼或低燒），建議提早安排抽血追蹤補體與抗體。';
+        evalEl.className = 'text-xs text-amber-600 font-bold mt-0.5';
+      } else {
+        evalEl.innerText = '警訊項目偏多，可能有潛在發炎活性或臟器侵犯，強烈建議盡早回診評估！';
+        evalEl.className = 'text-xs text-rose-600 font-bold mt-0.5';
+      }
+    }
+
+    function copyQuizResultsToNotes() {
+      const selected = QUIZ_QUESTIONS.filter(q => currentQuizSelection[q.id]);
+      if (selected.length === 0) {
+        showToast('請先勾選至少一項自評症狀');
+        return;
+      }
+
+      let addition = `\n【近期症狀自我檢視 (${new Date().toLocaleDateString()})】\n`;
+      selected.forEach(s => {
+        addition += `• ${s.text}\n`;
+      });
+
+      const tx = document.getElementById('visitNotesTextarea');
+      tx.value = tx.value.trim() + '\n' + addition;
+      showToast('已將自評症狀匯入就醫備忘錄！');
+      switchTab('tab-notes');
+    }
+
+    /* ==========================================================================
+       MEDICATIONS DIRECTORY
+       ========================================================================== */
+    function renderMedications(filterCategory, searchTerm = '') {
+      const container = document.getElementById('medicationsContainer');
+      container.innerHTML = '';
+
+      const term = searchTerm.trim().toLowerCase();
+
+      const filtered = MEDICATIONS_DATA.filter(m => {
+        const matchesCategory = (filterCategory === 'all' || m.category === filterCategory);
+        const matchesSearch = term === '' || 
+          m.name.toLowerCase().includes(term) || 
+          m.brand.toLowerCase().includes(term) || 
+          m.desc.toLowerCase().includes(term) ||
+          m.tag.toLowerCase().includes(term);
+        return matchesCategory && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-8 text-center text-slate-400 text-xs">
+            查無相符的藥物資料，請嘗試其他關鍵字。
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(med => {
+        const card = document.createElement('div');
+        card.className = "bg-white border border-slate-200 rounded-xl p-4 flex flex-col justify-between hover:shadow-sm transition";
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-teal-50 text-teal-700 border border-teal-200">${med.tag}</span>
+              <span class="text-xs text-slate-400">${med.brand}</span>
+            </div>
+            <h4 class="font-bold text-slate-900 text-sm mb-1">${med.name}</h4>
+            <p class="text-xs text-slate-600 leading-relaxed mb-3">${med.desc}</p>
+          </div>
+          <div class="pt-3 border-t border-slate-100 text-[11px] text-amber-900 bg-amber-50/50 p-2.5 rounded-lg border border-amber-100">
+            ${med.notes}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function filterMedType(cat) {
+      document.querySelectorAll('.med-tag-btn').forEach(btn => {
+        btn.classList.remove('bg-teal-600', 'text-white');
+        btn.classList.add('bg-slate-100', 'text-slate-700');
+      });
+      event.target.classList.remove('bg-slate-100', 'text-slate-700');
+      event.target.classList.add('bg-teal-600', 'text-white');
+
+      const term = document.getElementById('medSearchInput').value;
+      renderMedications(cat, term);
+    }
+
+    function filterMedications() {
+      const term = document.getElementById('medSearchInput').value;
+      renderMedications('all', term);
+    }
+
+    /* ==========================================================================
+       20-20-20 EYE TIMER
+       ========================================================================== */
+    function openTimerModal() {
+      document.getElementById('timerModal').classList.remove('hidden');
+      document.getElementById('timerModal').classList.add('flex');
+    }
+
+    function closeTimerModal() {
+      document.getElementById('timerModal').classList.add('hidden');
+      document.getElementById('timerModal').classList.remove('flex');
+    }
+
+    function toggleEyeTimer() {
+      const btn = document.getElementById('btnTimerToggle');
+      const status = document.getElementById('timerStatus');
+
+      if (isEyeTimerRunning) {
+        // Pause
+        clearInterval(eyeTimerInterval);
+        isEyeTimerRunning = false;
+        btn.innerHTML = `<i data-lucide="play" class="w-4 h-4"></i> 繼續計時`;
+        status.innerText = '計時已暫停';
+      } else {
+        // Start
+        isEyeTimerRunning = true;
+        btn.innerHTML = `<i data-lucide="pause" class="w-4 h-4"></i> 暫停`;
+        status.innerText = '專注工作中...每 20 分鐘提醒護眼';
+        
+        eyeTimerInterval = setInterval(() => {
+          if (eyeTimerRemaining > 0) {
+            eyeTimerRemaining--;
+            updateTimerDisplay();
+          } else {
+            // Ring / Alert
+            clearInterval(eyeTimerInterval);
+            isEyeTimerRunning = false;
+            btn.innerHTML = `<i data-lucide="play" class="w-4 h-4"></i> 開始下一輪`;
+            status.innerText = '【時間到！】請遠眺 6 公尺外 20 秒，刻意完全閉眼潤澤角膜。';
+            showToast('時間到！請讓眼睛休息 20 秒並深閉眼');
+            eyeTimerRemaining = 20 * 60;
+          }
+        }, 1000);
+      }
+      lucide.createIcons();
+    }
+
+    function resetEyeTimer() {
+      clearInterval(eyeTimerInterval);
+      isEyeTimerRunning = false;
+      eyeTimerRemaining = 20 * 60;
+      updateTimerDisplay();
+      document.getElementById('timerStatus').innerText = '準備中，請點擊開始專注';
+      document.getElementById('btnTimerToggle').innerHTML = `<i data-lucide="play" class="w-4 h-4"></i> 開始專注計時`;
+      lucide.createIcons();
+    }
+
+    function updateTimerDisplay() {
+      const minutes = Math.floor(eyeTimerRemaining / 60);
+      const seconds = eyeTimerRemaining % 60;
+      const str = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      document.getElementById('timerCountdown').innerText = str;
+    }
+
+    /* ==========================================================================
+       VISIT NOTES GENERATOR
+       ========================================================================== */
+    function initVisitNotes() {
+      const container = document.getElementById('quickQuestionsPool');
+      container.innerHTML = '';
+
+      QUICK_QUESTIONS_DEFAULT.forEach((q, idx) => {
+        const btn = document.createElement('button');
+        btn.className = "text-left p-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:border-teal-500 hover:text-teal-700 transition flex items-center justify-between group";
+        btn.innerHTML = `
+          <span class="truncate">${q}</span>
+          <i data-lucide="plus" class="w-3.5 h-3.5 text-slate-400 group-hover:text-teal-600 shrink-0"></i>
+        `;
+        btn.onclick = () => appendQuestionToNotes(q);
+        container.appendChild(btn);
+      });
+
+      // Default Template in Textarea
+      const defaultText = `【紅斑性狼瘡與乾燥症 回診問診備忘錄】
+看診日期：${new Date().toLocaleDateString()}
+目前主要困擾部位：
+• 眼睛乾燥程度：(正常 / 乾澀 / 刺痛)
+• 口腔口渴頻率：(需頻繁喝水 / 吞嚥困難)
+• 關節痠痛部位：
+
+【我想向醫師諮詢的問題清單】：
+1. 
+`;
+      document.getElementById('visitNotesTextarea').value = defaultText;
+    }
+
+    function appendQuestionToNotes(question) {
+      const tx = document.getElementById('visitNotesTextarea');
+      tx.value = tx.value.trim() + `\n• ${question}\n`;
+      showToast('已加入提問清單');
+    }
+
+    function addCustomNote() {
+      const input = document.getElementById('customNoteInput');
+      const val = input.value.trim();
+      if (!val) {
+        showToast('請先輸入問題內容');
+        return;
+      }
+      appendQuestionToNotes(val);
+      input.value = '';
+    }
+
+    function clearVisitNotes() {
+      document.getElementById('visitNotesTextarea').value = '';
+      showToast('備忘錄已清空');
+    }
+
+    function copyVisitNotes() {
+      const tx = document.getElementById('visitNotesTextarea');
+      if (!tx.value.trim()) {
+        showToast('清單內容為空');
+        return;
+      }
+      tx.select();
+      document.execCommand('copy');
+      showToast('備忘錄已成功複製到剪貼簿！');
+    }
+
+    /* ==========================================================================
+       TOAST UTILITY
+       ========================================================================== */
+    let toastTimeout = null;
+    function showToast(text) {
+      const toast = document.getElementById('toastMessage');
+      document.getElementById('toastText').innerText = text;
+
+      toast.classList.remove('opacity-0', 'translate-y-20');
+      toast.classList.add('opacity-100', 'translate-y-0');
+
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-20');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 2500);
+    }
+  </script>
+</body>
+</html>
